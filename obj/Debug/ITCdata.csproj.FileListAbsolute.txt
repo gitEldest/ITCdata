@@ -1,0 +1,15 @@
+C:\Users\robik\OneDrive\Documents\Visual Studio 2017\Projects\ITCdata\ITCdata\bin\Debug\ITCdata.exe.config
+C:\Users\robik\OneDrive\Documents\Visual Studio 2017\Projects\ITCdata\ITCdata\bin\Debug\ITCdata.exe
+C:\Users\robik\OneDrive\Documents\Visual Studio 2017\Projects\ITCdata\ITCdata\bin\Debug\ITCdata.pdb
+C:\Users\robik\OneDrive\Documents\Visual Studio 2017\Projects\ITCdata\ITCdata\obj\Debug\ITCdata.Form1.resources
+C:\Users\robik\OneDrive\Documents\Visual Studio 2017\Projects\ITCdata\ITCdata\obj\Debug\ITCdata.Properties.Resources.resources
+C:\Users\robik\OneDrive\Documents\Visual Studio 2017\Projects\ITCdata\ITCdata\obj\Debug\ITCdata.csproj.GenerateResource.cache
+C:\Users\robik\OneDrive\Documents\Visual Studio 2017\Projects\ITCdata\ITCdata\obj\Debug\ITCdata.csproj.CoreCompileInputs.cache
+C:\Users\robik\OneDrive\Documents\Visual Studio 2017\Projects\ITCdata\ITCdata\obj\Debug\ITCdata.exe
+C:\Users\robik\OneDrive\Documents\Visual Studio 2017\Projects\ITCdata\ITCdata\obj\Debug\ITCdata.pdb
+C:\Users\robik\onedrive\documents\visual studio 2017\Projects\ITCdata\ITCdata\bin\Debug\ITCdata.exe.manifest
+C:\Users\robik\onedrive\documents\visual studio 2017\Projects\ITCdata\ITCdata\bin\Debug\ITCdata.application
+C:\Users\robik\onedrive\documents\visual studio 2017\Projects\ITCdata\ITCdata\obj\Debug\ITCdata.exe.manifest
+C:\Users\robik\onedrive\documents\visual studio 2017\Projects\ITCdata\ITCdata\obj\Debug\ITCdata.application
+C:\Users\robik\OneDrive\Documents\Visual Studio 2017\Projects\ITCdata\ITCdata\obj\Debug\ITCdata.GraphPage.resources
+C:\Users\robik\OneDrive\Documents\Visual Studio 2017\Projects\ITCdata\ITCdata\obj\Debug\ITCdata.csprojAssemblyReference.cache
