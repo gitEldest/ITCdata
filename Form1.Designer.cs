@@ -30,8 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea14 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend14 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.textBox4 = new System.Windows.Forms.TextBox();
@@ -48,6 +48,7 @@
             this.ResultsGraph = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.results = new System.Windows.Forms.ListView();
             this.itcdata_BG = new System.Windows.Forms.PictureBox();
+            this.resetButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.SelectButton)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CalculateButton)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CloseButton)).BeginInit();
@@ -181,10 +182,10 @@
             // 
             // ResultsGraph
             // 
-            chartArea1.Name = "ChartArea1";
-            this.ResultsGraph.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.ResultsGraph.Legends.Add(legend1);
+            chartArea14.Name = "ChartArea1";
+            this.ResultsGraph.ChartAreas.Add(chartArea14);
+            legend14.Name = "Legend1";
+            this.ResultsGraph.Legends.Add(legend14);
             this.ResultsGraph.Location = new System.Drawing.Point(242, 483);
             this.ResultsGraph.Name = "ResultsGraph";
             this.ResultsGraph.Size = new System.Drawing.Size(706, 236);
@@ -213,12 +214,25 @@
             this.itcdata_BG.TabIndex = 16;
             this.itcdata_BG.TabStop = false;
             // 
+            // resetButton
+            // 
+            this.resetButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.resetButton.Font = new System.Drawing.Font("Times New Roman", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(186)));
+            this.resetButton.Location = new System.Drawing.Point(1160, 12);
+            this.resetButton.Name = "resetButton";
+            this.resetButton.Size = new System.Drawing.Size(46, 25);
+            this.resetButton.TabIndex = 17;
+            this.resetButton.Text = "Reset";
+            this.resetButton.UseVisualStyleBackColor = true;
+            this.resetButton.Click += new System.EventHandler(this.resetButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
             this.ClientSize = new System.Drawing.Size(1280, 720);
+            this.Controls.Add(this.resetButton);
             this.Controls.Add(this.ResultsGraph);
             this.Controls.Add(this.MinimizeButton);
             this.Controls.Add(this.CloseButton);
@@ -264,6 +278,7 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart ResultsGraph;
         private System.Windows.Forms.ListView results;
         private System.Windows.Forms.PictureBox itcdata_BG;
+        private System.Windows.Forms.Button resetButton;
     }
 }
 

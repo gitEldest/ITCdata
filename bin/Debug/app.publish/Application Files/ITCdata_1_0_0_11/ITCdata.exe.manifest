@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
+  <asmv1:assemblyIdentity name="ITCdata.exe" version="1.0.0.11" publicKeyToken="e249828a5f95158e" language="neutral" processorArchitecture="msil" type="win32" />
+  <application />
+  <entryPoint>
+    <assemblyIdentity name="ITCdata" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+    <commandLine file="ITCdata.exe" parameters="" />
+  </entryPoint>
+  <trustInfo>
+    <security>
+      <applicationRequestMinimum>
+        <PermissionSet Unrestricted="true" ID="Custom" SameSite="site" />
+        <defaultAssemblyRequest permissionSetReference="Custom" />
+      </applicationRequestMinimum>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <!--
+          UAC Manifest Options
+          If you want to change the Windows User Account Control level replace the 
+          requestedExecutionLevel node with one of the following.
+
+        <requestedExecutionLevel  level="asInvoker" uiAccess="false" />
+        <requestedExecutionLevel  level="requireAdministrator" uiAccess="false" />
+        <requestedExecutionLevel  level="highestAvailable" uiAccess="false" />
+
+         If you want to utilize File and Registry Virtualization for backward 
+         compatibility then delete the requestedExecutionLevel node.
+    -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <dependency>
+    <dependentOS>
+      <osVersionInfo>
+        <os majorVersion="5" minorVersion="1" buildNumber="2600" servicePackMajor="0" />
+      </osVersionInfo>
+    </dependentOS>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="Microsoft.Windows.CommonLanguageRuntime" version="4.0.30319.0" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ITCdata.exe" size="2098144">
+      <assemblyIdentity name="ITCdata" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>HGjIcxzsN4XIuv1mUg7SQMTj+UWRu2o4MN/6m0t9lSg=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <file name="ITCdata.exe.config" size="189">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>rl5/qDc7Jz+tB+BIbOv9iMGPlRe6YJwrjmU09dnlPcs=</dsig:DigestValue>
+    </hash>
+  </file>
+<publisherIdentity name="CN=DESKTOP-L0J4VAP\robik" issuerKeyHash="db544b671c6c4d8226966d3ce54ddeb2bf4cd078" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>xqoXQD33s85q8p/1x0HUKTu+M7tOViZekEpJ0ObGUlY=</DigestValue></Reference></SignedInfo><SignatureValue>KIZdEs9FpDQ37Y1pcjrBwXMc2jdUkm07u52bjUTQhgu4eaebar9C1MIIM1UN1K5z9MuelK8fp6aHUdbMM+i8hE2lNqU0tMYJdEWyxsPZAgwu1rP7H8m4lR8fWjgUrsmEERqb4T1ls2BuiPWQovznekzlwN5wNNG+DDlRWODv+Os=</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>3mWz31DSk8pDzFh7hE0jUdRXhMCJ0BPXdRYTDCOXJhaOPMPcuRXKjjn31PE4v+X6RrQrqKrnjz7tw1cOSB+DKFDLQFZ4YTQjaspqTpwTOGfLCE3ckXiyndyMXuAxEsTtaLtftuBzsLRGB1xylaDfxbYj3nhFVlSRBsyH0L43Blk=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="5652c6e6d0494a905e26564ebb33be3b29d441c7f59ff26aceb3f73d4017aac6" Description="" Url=""><as:assemblyIdentity name="ITCdata.exe" version="1.0.0.11" publicKeyToken="e249828a5f95158e" language="neutral" processorArchitecture="msil" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=DESKTOP-L0J4VAP\robik</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>RBYyw3WVxzPV9WegBDEyL3qm7o4q3apucPBCYjC+OMM=</DigestValue></Reference></SignedInfo><SignatureValue>e39dTGzNPRtzXlDT/sj0yP4mJL8D3IB59L/l9HRl6wySFSdmJ3Scp1qHLp/5g8S74VyoueqbERnyENKhANlV8Q43IjOYf3JNsdbIMRfDUzbskWLzDzTy8SVcq/zMnEDq/UiZXYsC2Go7d7jPdhRUmR1IvKnNNg8RT1XN9iKjwrU=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>3mWz31DSk8pDzFh7hE0jUdRXhMCJ0BPXdRYTDCOXJhaOPMPcuRXKjjn31PE4v+X6RrQrqKrnjz7tw1cOSB+DKFDLQFZ4YTQjaspqTpwTOGfLCE3ckXiyndyMXuAxEsTtaLtftuBzsLRGB1xylaDfxbYj3nhFVlSRBsyH0L43Blk=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIB7TCCAVagAwIBAgIQV6S6LX/iq5BC/eRxw8I6NDANBgkqhkiG9w0BAQsFADA1MTMwMQYDVQQDHioARABFAFMASwBUAE8AUAAtAEwAMABKADQAVgBBAFAAXAByAG8AYgBpAGswHhcNMTgxMDE3MTQzNjQ2WhcNMTkxMDE3MjAzNjQ2WjA1MTMwMQYDVQQDHioARABFAFMASwBUAE8AUAAtAEwAMABKADQAVgBBAFAAXAByAG8AYgBpAGswgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAN5ls99Q0pPKQ8xYe4RNI1HUV4TAidAT13UWEwwjlyYWjjzD3LkVyo4599TxOL/l+ka0K6iq548+7cNXDkgfgyhQy0BWeGE0I2rKak6cEzhnywhN3JF4sp3cjF7gMRLE7Wi7X7bgc7C0RgdccpWg38W2I954RVZUkQbMh9C+NwZZAgMBAAEwDQYJKoZIhvcNAQELBQADgYEAY7sGwLePJFIRiphvq/5mlk9Y/glVmRc8KJjK9Ifo0gG5kx1ecpzIz7dLg4ltVtKm4VfDWRGyJbaFsFF0kbbH9t2iRUq575jnYQv5iwyvr7zWTMXasROfbweq8Kf/tMyi1kjVVyk+BXsVGOKqHcbt9BArbktS2j4Ge1JdZphLlqw=</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>

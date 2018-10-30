@@ -17,11 +17,14 @@ namespace ITCdata
         List<List<double>> heat = new List<List<double>>();
         List<double> conc = new List<double>();
         List<double> averageHeat = new List<double>();
+        List<double> averageHeatDeviation = new List<double>();
         List<Experiment> experimentList = new List<Experiment>();
         double rS;
         double intercept;
         double slope;
         double baseline;
+        double heat_STDEV;
+        double signalNoise;
         int initialDelay;
         int injLength;
         int peakDelay;
@@ -119,7 +122,6 @@ namespace ITCdata
             baseline = 0;
             for (int a = initialDelay + peakDelay;a <= initialDelay + injLength; a++)
             {
-                Console.WriteLine(heat.Count);
                 baseline += heat[a][fileNumber];
             }
             baseline = baseline / (injLength - peakDelay + 1);
@@ -147,8 +149,23 @@ namespace ITCdata
                 averageHeat[b] = averageHeat[b] / (injLength - peakDelay + 1);
                 averageHeat[b] -= baseline;
             }
+            //STDEV S/N jaoks
+            for (int a = initialDelay + peakDelay+ injLength; a <= initialDelay + injLength*2; a++)
+            {
+                averageHeatDeviation.Add(Math.Pow(heat[a][fileNumber] - baseline - averageHeat[1], 2));      
+               
+            }
             
-
+            for (int a = 0; a < averageHeatDeviation.Count; a++)
+            {
+                
+                heat_STDEV += averageHeatDeviation[a];
+            }
+            heat_STDEV = heat_STDEV / averageHeatDeviation.Count();  
+            heat_STDEV = Math.Sqrt(heat_STDEV);
+            signalNoise = Math.Round(heat_STDEV = averageHeat[1] / heat_STDEV, 1, MidpointRounding.AwayFromZero);
+            
+            //Regression
             double sumOfX = 0;
             double sumOfY = 0;
             double sumOfXSq = 0;
@@ -184,14 +201,16 @@ namespace ITCdata
             slope = sCo / ssX;
 
             //Data salvestamine 
-            Experiment experiment = new Experiment(titles[fileNumber],slope, intercept, injConc, averageHeat );
+            Experiment experiment = new Experiment(titles[fileNumber],slope, intercept, injConc, averageHeat);
             experimentList.Add(experiment);
 
             //Andmed graafikule
             DrawPlot(fileNumber);
             //Temp listid tühjaks järgmiseks katseks
             averageHeat.Clear();
+            averageHeatDeviation.Clear();
             conc.Clear();
+            heat_STDEV = 0;
 
         }//LinearRegression
 
@@ -283,6 +302,7 @@ namespace ITCdata
 
             try
             {
+                trend.IsVisibleInLegend = false;
                 ResultsGraph.Series.Add(trend);
                 ResultsGraph.Series.Add(series1);
             }
@@ -348,24 +368,35 @@ namespace ITCdata
                                 tempList.Add(double.Parse(fields[a-1], System.Globalization.CultureInfo.InvariantCulture)); //0 - aeg, pole vaja; 1 - soojus
                             }
                         }
-                        heat.Add(tempList);
-                       
+                        heat.Add(tempList);    
                     }
-
                     for (int d = 0; d < titles.Count;  d++) {
                         LinearRegression(sFileNames[i], d);
                         ListViewItem item = new ListViewItem(slope.ToString("0.000"), 0);
                         item.SubItems.Add(rS.ToString("0.000"));
                         item.SubItems.Add(titles[d]);
-                        item.SubItems.Add("OK");
+                        item.SubItems.Add(checkSignal());
                         results.Items.Insert(0, item);
-  results.Columns[2].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-
+                        results.Columns[2].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
                     }
                 }
             }
             heat.Clear();
             titles.Clear();
         }//CalculateButton_Click
+        private string checkSignal() {
+            if(signalNoise >= 10)
+            {
+                return "";
+            }
+            return "WARNING: S/N ratio is low: " + signalNoise.ToString("0.0");
+        }
+
+        private void resetButton_Click(object sender, EventArgs e)
+        {
+            results.Items.Clear();
+            ResultsGraph.Series.Clear();
+            
+        }
     }//end class Form1
 } //end namespace ITCdata
