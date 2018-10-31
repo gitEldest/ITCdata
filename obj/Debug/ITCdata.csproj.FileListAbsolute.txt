@@ -20,7 +20,6 @@ C:\Users\robik\Source\Repos\gitEldest\ITCdata\bin\Debug\ITCdata.exe
 C:\Users\robik\Source\Repos\gitEldest\ITCdata\bin\Debug\ITCdata.pdb
 C:\Users\robik\Source\Repos\gitEldest\ITCdata\obj\Debug\ITCdata.csprojAssemblyReference.cache
 C:\Users\robik\Source\Repos\gitEldest\ITCdata\obj\Debug\ITCdata.Form1.resources
-C:\Users\robik\Source\Repos\gitEldest\ITCdata\obj\Debug\ITCdata.GraphPage.resources
 C:\Users\robik\Source\Repos\gitEldest\ITCdata\obj\Debug\ITCdata.Properties.Resources.resources
 C:\Users\robik\Source\Repos\gitEldest\ITCdata\obj\Debug\ITCdata.csproj.GenerateResource.cache
 C:\Users\robik\Source\Repos\gitEldest\ITCdata\obj\Debug\ITCdata.csproj.CoreCompileInputs.cache

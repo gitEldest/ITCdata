@@ -18,6 +18,8 @@ namespace ITCdata
         List<double> conc = new List<double>();
         List<double> averageHeat = new List<double>();
         List<double> averageHeatDeviation = new List<double>();
+        List<double> injStartValue = new List<double>();
+        List<double> injEndValue = new List<double>();
         List<Experiment> experimentList = new List<Experiment>();
         double rS;
         double intercept;
@@ -31,7 +33,12 @@ namespace ITCdata
         int injAmount;
         double injConc;
         int injNumber;
- 
+
+        private bool activityHidden;
+        private string baselineMessage;
+        private int baselineDriftTolerance;
+        private int signalNoiseTolerance;
+
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
 
@@ -44,6 +51,9 @@ namespace ITCdata
         {
             InitializeComponent();
 
+           activityHidden = false;
+            baselineDriftTolerance = 4;
+            signalNoiseTolerance = 5;
             results.View = View.Details;
             results.MultiSelect = true;
             results.LabelEdit = true;
@@ -73,7 +83,7 @@ namespace ITCdata
             this.MouseDown += Form1_MouseDown;
             results.MouseDown += Form1_MouseDown;
             itcdata_BG.MouseDown += Form1_MouseDown;
-            ResultsGraph.MouseDown += Form1_MouseDown;
+            resultsGraph.MouseDown += Form1_MouseDown;
             CalculateButton.Image = CalculateList.Images[0];
 
         }
@@ -112,6 +122,7 @@ namespace ITCdata
         }
         private void LinearRegression(string fileName, int fileNumber)
         {
+            baselineMessage = "";
             //flip, et saaks võrrelda vana ITC-ga
             for (int c = 0; c < heat.Count; c++)
             {
@@ -138,6 +149,8 @@ namespace ITCdata
             {
                 injNumber = k + 1;
                 averageHeat.Add(0);
+                injStartValue.Add(heat[initialDelay + peakDelay + injLength * injNumber][fileNumber]);
+                injEndValue.Add(heat[initialDelay + injLength * (injNumber + 1)][fileNumber]);
                 for (int a = initialDelay + peakDelay + injLength * injNumber; a <= initialDelay + injLength * (injNumber + 1); a++)
                 {
                     averageHeat[injNumber] += heat[a][fileNumber];
@@ -158,13 +171,11 @@ namespace ITCdata
             
             for (int a = 0; a < averageHeatDeviation.Count; a++)
             {
-                
                 heat_STDEV += averageHeatDeviation[a];
             }
             heat_STDEV = heat_STDEV / averageHeatDeviation.Count();  
             heat_STDEV = Math.Sqrt(heat_STDEV);
-            signalNoise = Math.Round(heat_STDEV = averageHeat[1] / heat_STDEV, 1, MidpointRounding.AwayFromZero);
-            
+            signalNoise = Math.Round(averageHeat[1] / heat_STDEV, 1, MidpointRounding.AwayFromZero);
             //Regression
             double sumOfX = 0;
             double sumOfY = 0;
@@ -200,6 +211,21 @@ namespace ITCdata
             intercept = meanY - ((sCo / ssX) * meanX);
             slope = sCo / ssX;
 
+            //Hetkel jagab läbi ainult ühe STDEV väärtusega, mis on leitud esimese süsti põhjal
+            int baseInj = 0;
+            for (int i = 0; i < injAmount; i++)
+            {
+                if (Math.Abs(injEndValue[i] - injStartValue[i]) / heat_STDEV > baselineDriftTolerance && baseInj == 0)
+                {
+                    baselineMessage = "WARNING: Possible baseline drift for injection(s) nr: " + (i + 1).ToString();
+                    baseInj++;
+                }
+                else if (Math.Abs(injEndValue[i] - injStartValue[i]) / heat_STDEV > baselineDriftTolerance && baseInj > 0)
+                {
+                    baselineMessage = baselineMessage + "," + (i + 1).ToString();
+                }
+            }
+            baseInj = 0;
             //Data salvestamine 
             Experiment experiment = new Experiment(titles[fileNumber],slope, intercept, injConc, averageHeat);
             experimentList.Add(experiment);
@@ -284,8 +310,8 @@ namespace ITCdata
         {
             Series series1 = new Series { Name = experimentList[ID].title, ChartType = SeriesChartType.Point, MarkerSize = 7 };
             Series trend = new Series { Name = "", ChartType = SeriesChartType.Line };
-            ResultsGraph.ChartAreas[0].AxisX.Minimum = 0;
-            ResultsGraph.ChartAreas[0].AxisY.Minimum = 0;
+            resultsGraph.ChartAreas[0].AxisX.Minimum = 0;
+            resultsGraph.ChartAreas[0].AxisY.Minimum = 0;
             series1.Points.AddXY(0, 0);
 
             for (int b = 1; b < experimentList[ID].avgHeat.Count; b++)
@@ -295,16 +321,16 @@ namespace ITCdata
 
             trend.Points.AddXY(0, experimentList[ID].intercept);
             trend.Points.AddXY(experimentList[ID].conc * (experimentList[ID].avgHeat.Count - 1), experimentList[ID].intercept + experimentList[ID].slope * experimentList[ID].conc * (experimentList[ID].avgHeat.Count - 1));
-            if(ResultsGraph.ChartAreas[0].AxisY.Maximum < Math.Round(experimentList[ID].intercept + experimentList[ID].slope * experimentList[ID].conc * (experimentList[ID].avgHeat.Count - 1) + 1, 2, MidpointRounding.AwayFromZero))
+            if(resultsGraph.ChartAreas[0].AxisY.Maximum < Math.Round(experimentList[ID].intercept + experimentList[ID].slope * experimentList[ID].conc * (experimentList[ID].avgHeat.Count - 1) + 1, 2, MidpointRounding.AwayFromZero))
             {
-                ResultsGraph.ChartAreas[0].AxisY.Maximum = Math.Round(experimentList[ID].intercept + experimentList[ID].slope * experimentList[ID].conc * (experimentList[ID].avgHeat.Count - 1) + 1, 2, MidpointRounding.AwayFromZero);
+                resultsGraph.ChartAreas[0].AxisY.Maximum = Math.Round(experimentList[ID].intercept + experimentList[ID].slope * experimentList[ID].conc * (experimentList[ID].avgHeat.Count - 1) + 1, 2, MidpointRounding.AwayFromZero);
             }
 
             try
             {
                 trend.IsVisibleInLegend = false;
-                ResultsGraph.Series.Add(trend);
-                ResultsGraph.Series.Add(series1);
+                resultsGraph.Series.Add(trend);
+                resultsGraph.Series.Add(series1);
             }
             catch (System.ArgumentException)
             {
@@ -313,8 +339,8 @@ namespace ITCdata
         }//DrawPlot
 
         private void SelectItems(object sender, EventArgs e) {
-            ResultsGraph.Series.Clear();
-            ResultsGraph.ChartAreas[0].AxisY.Maximum = 0;
+            resultsGraph.Series.Clear();
+            resultsGraph.ChartAreas[0].AxisY.Maximum = 0;
             int ID;
             foreach (ListViewItem item in results.SelectedItems)
             { 
@@ -336,7 +362,7 @@ namespace ITCdata
 
         private void CalculateButton_Click(object sender, EventArgs e)
         {
-           ResultsGraph.Series.Clear();
+           resultsGraph.Series.Clear();
             initialDelay = int.Parse(textBox1.Text) - 5;
             injLength = int.Parse(textBox2.Text);
             injAmount = int.Parse(textBox4.Text);
@@ -375,7 +401,7 @@ namespace ITCdata
                         ListViewItem item = new ListViewItem(slope.ToString("0.000"), 0);
                         item.SubItems.Add(rS.ToString("0.000"));
                         item.SubItems.Add(titles[d]);
-                        item.SubItems.Add(checkSignal());
+                        item.SubItems.Add(CheckSignal() + " " + baselineMessage);
                         results.Items.Insert(0, item);
                         results.Columns[2].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
                     }
@@ -384,8 +410,9 @@ namespace ITCdata
             heat.Clear();
             titles.Clear();
         }//CalculateButton_Click
-        private string checkSignal() {
-            if(signalNoise >= 10)
+
+        private string CheckSignal() {
+            if (signalNoise >= signalNoiseTolerance)
             {
                 return "";
             }
@@ -395,8 +422,32 @@ namespace ITCdata
         private void resetButton_Click(object sender, EventArgs e)
         {
             results.Items.Clear();
-            ResultsGraph.Series.Clear();
-            
+            resultsGraph.Series.Clear();     
+        }
+
+        private void TransformationSwitch_Click(object sender, EventArgs e)
+        {
+            ToggleEnzymeActivity();
+        }
+        private void ToggleEnzymeActivity()
+        {
+            if (activityHidden == false)
+            {
+                results.Hide();
+                resultsGraph.Hide();
+                activityHidden = true;
+            }
+            else
+            {
+                results.Show();
+                resultsGraph.Show();
+                activityHidden = false;
+            }
+        }
+
+        private void AdvancedSettings_Click(object sender, EventArgs e)
+        {
+            ToggleEnzymeActivity();
         }
     }//end class Form1
 } //end namespace ITCdata

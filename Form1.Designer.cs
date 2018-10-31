@@ -30,8 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea14 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend14 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.textBox4 = new System.Windows.Forms.TextBox();
@@ -45,15 +45,17 @@
             this.CalculateList = new System.Windows.Forms.ImageList(this.components);
             this.CloseButton = new System.Windows.Forms.PictureBox();
             this.MinimizeButton = new System.Windows.Forms.PictureBox();
-            this.ResultsGraph = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.resultsGraph = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.results = new System.Windows.Forms.ListView();
             this.itcdata_BG = new System.Windows.Forms.PictureBox();
             this.resetButton = new System.Windows.Forms.Button();
+            this.TransformationSwitch = new System.Windows.Forms.Button();
+            this.AdvancedSettings = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.SelectButton)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CalculateButton)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CloseButton)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MinimizeButton)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ResultsGraph)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.resultsGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.itcdata_BG)).BeginInit();
             this.SuspendLayout();
             // 
@@ -180,17 +182,17 @@
             this.MinimizeButton.TabIndex = 14;
             this.MinimizeButton.TabStop = false;
             // 
-            // ResultsGraph
+            // resultsGraph
             // 
-            chartArea14.Name = "ChartArea1";
-            this.ResultsGraph.ChartAreas.Add(chartArea14);
-            legend14.Name = "Legend1";
-            this.ResultsGraph.Legends.Add(legend14);
-            this.ResultsGraph.Location = new System.Drawing.Point(242, 483);
-            this.ResultsGraph.Name = "ResultsGraph";
-            this.ResultsGraph.Size = new System.Drawing.Size(706, 236);
-            this.ResultsGraph.TabIndex = 15;
-            this.ResultsGraph.Text = "Enzyme activity";
+            chartArea2.Name = "ChartArea1";
+            this.resultsGraph.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.resultsGraph.Legends.Add(legend2);
+            this.resultsGraph.Location = new System.Drawing.Point(242, 483);
+            this.resultsGraph.Name = "resultsGraph";
+            this.resultsGraph.Size = new System.Drawing.Size(706, 236);
+            this.resultsGraph.TabIndex = 15;
+            this.resultsGraph.Text = "Enzyme activity";
             // 
             // results
             // 
@@ -226,14 +228,36 @@
             this.resetButton.UseVisualStyleBackColor = true;
             this.resetButton.Click += new System.EventHandler(this.resetButton_Click);
             // 
+            // TransformationSwitch
+            // 
+            this.TransformationSwitch.Location = new System.Drawing.Point(259, 55);
+            this.TransformationSwitch.Name = "TransformationSwitch";
+            this.TransformationSwitch.Size = new System.Drawing.Size(123, 23);
+            this.TransformationSwitch.TabIndex = 18;
+            this.TransformationSwitch.Text = "Transformation test";
+            this.TransformationSwitch.UseVisualStyleBackColor = true;
+            this.TransformationSwitch.Click += new System.EventHandler(this.TransformationSwitch_Click);
+            // 
+            // AdvancedSettings
+            // 
+            this.AdvancedSettings.Location = new System.Drawing.Point(1160, 55);
+            this.AdvancedSettings.Name = "AdvancedSettings";
+            this.AdvancedSettings.Size = new System.Drawing.Size(109, 23);
+            this.AdvancedSettings.TabIndex = 19;
+            this.AdvancedSettings.Text = "Advanced settings";
+            this.AdvancedSettings.UseVisualStyleBackColor = true;
+            this.AdvancedSettings.Click += new System.EventHandler(this.AdvancedSettings_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
             this.ClientSize = new System.Drawing.Size(1280, 720);
+            this.Controls.Add(this.AdvancedSettings);
+            this.Controls.Add(this.TransformationSwitch);
             this.Controls.Add(this.resetButton);
-            this.Controls.Add(this.ResultsGraph);
+            this.Controls.Add(this.resultsGraph);
             this.Controls.Add(this.MinimizeButton);
             this.Controls.Add(this.CloseButton);
             this.Controls.Add(this.CalculateButton);
@@ -254,7 +278,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.CalculateButton)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.CloseButton)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MinimizeButton)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ResultsGraph)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.resultsGraph)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.itcdata_BG)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -275,10 +299,12 @@
         private System.Windows.Forms.PictureBox CloseButton;
         private System.Windows.Forms.PictureBox MinimizeButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.DataVisualization.Charting.Chart ResultsGraph;
+        private System.Windows.Forms.DataVisualization.Charting.Chart resultsGraph;
         private System.Windows.Forms.ListView results;
         private System.Windows.Forms.PictureBox itcdata_BG;
         private System.Windows.Forms.Button resetButton;
+        private System.Windows.Forms.Button TransformationSwitch;
+        private System.Windows.Forms.Button AdvancedSettings;
     }
 }
 
