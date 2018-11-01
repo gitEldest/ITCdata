@@ -30,6 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -50,13 +52,25 @@
             this.itcdata_BG = new System.Windows.Forms.PictureBox();
             this.resetButton = new System.Windows.Forms.Button();
             this.TransformationSwitch = new System.Windows.Forms.Button();
-            this.AdvancedSettings = new System.Windows.Forms.Button();
+            this.AdvancedSettingsButton = new System.Windows.Forms.Button();
+            this.AdvancedSettings = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.transformationGraph = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.transformResults = new System.Windows.Forms.ListView();
             ((System.ComponentModel.ISupportInitialize)(this.SelectButton)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CalculateButton)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CloseButton)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MinimizeButton)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resultsGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.itcdata_BG)).BeginInit();
+            this.AdvancedSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.transformationGraph)).BeginInit();
             this.SuspendLayout();
             // 
             // textBox5
@@ -184,10 +198,10 @@
             // 
             // resultsGraph
             // 
-            chartArea2.Name = "ChartArea1";
-            this.resultsGraph.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.resultsGraph.Legends.Add(legend2);
+            chartArea1.Name = "ChartArea1";
+            this.resultsGraph.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.resultsGraph.Legends.Add(legend1);
             this.resultsGraph.Location = new System.Drawing.Point(242, 483);
             this.resultsGraph.Name = "resultsGraph";
             this.resultsGraph.Size = new System.Drawing.Size(706, 236);
@@ -238,15 +252,118 @@
             this.TransformationSwitch.UseVisualStyleBackColor = true;
             this.TransformationSwitch.Click += new System.EventHandler(this.TransformationSwitch_Click);
             // 
+            // AdvancedSettingsButton
+            // 
+            this.AdvancedSettingsButton.Location = new System.Drawing.Point(1160, 55);
+            this.AdvancedSettingsButton.Name = "AdvancedSettingsButton";
+            this.AdvancedSettingsButton.Size = new System.Drawing.Size(109, 23);
+            this.AdvancedSettingsButton.TabIndex = 19;
+            this.AdvancedSettingsButton.Text = "Advanced settings";
+            this.AdvancedSettingsButton.UseVisualStyleBackColor = true;
+            this.AdvancedSettingsButton.Click += new System.EventHandler(this.AdvancedSettings_Click);
+            // 
             // AdvancedSettings
             // 
-            this.AdvancedSettings.Location = new System.Drawing.Point(1160, 55);
+            this.AdvancedSettings.Controls.Add(this.button1);
+            this.AdvancedSettings.Controls.Add(this.textBox8);
+            this.AdvancedSettings.Controls.Add(this.textBox7);
+            this.AdvancedSettings.Controls.Add(this.textBox6);
+            this.AdvancedSettings.Controls.Add(this.label3);
+            this.AdvancedSettings.Controls.Add(this.label2);
+            this.AdvancedSettings.Controls.Add(this.label1);
+            this.AdvancedSettings.Font = new System.Drawing.Font("Palanquin Light", 10F);
+            this.AdvancedSettings.Location = new System.Drawing.Point(1069, 55);
             this.AdvancedSettings.Name = "AdvancedSettings";
-            this.AdvancedSettings.Size = new System.Drawing.Size(109, 23);
-            this.AdvancedSettings.TabIndex = 19;
+            this.AdvancedSettings.Size = new System.Drawing.Size(200, 201);
+            this.AdvancedSettings.TabIndex = 20;
+            this.AdvancedSettings.TabStop = false;
             this.AdvancedSettings.Text = "Advanced settings";
-            this.AdvancedSettings.UseVisualStyleBackColor = true;
-            this.AdvancedSettings.Click += new System.EventHandler(this.AdvancedSettings_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 78);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(91, 25);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "S/N tolerance";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 28);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(145, 25);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Baseline drift tolerance";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 128);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(76, 25);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Peak delay";
+            // 
+            // textBox6
+            // 
+            this.textBox6.Font = new System.Drawing.Font("Palanquin Light", 8F);
+            this.textBox6.Location = new System.Drawing.Point(11, 54);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.Size = new System.Drawing.Size(100, 27);
+            this.textBox6.TabIndex = 3;
+            // 
+            // textBox7
+            // 
+            this.textBox7.Font = new System.Drawing.Font("Palanquin Light", 8F);
+            this.textBox7.Location = new System.Drawing.Point(11, 106);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.Size = new System.Drawing.Size(100, 27);
+            this.textBox7.TabIndex = 4;
+            // 
+            // textBox8
+            // 
+            this.textBox8.Font = new System.Drawing.Font("Palanquin Light", 8F);
+            this.textBox8.Location = new System.Drawing.Point(11, 156);
+            this.textBox8.Name = "textBox8";
+            this.textBox8.Size = new System.Drawing.Size(100, 27);
+            this.textBox8.TabIndex = 5;
+            // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Palanquin Light", 8F);
+            this.button1.Location = new System.Drawing.Point(143, 176);
+            this.button1.Margin = new System.Windows.Forms.Padding(0);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(52, 22);
+            this.button1.TabIndex = 6;
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // transformationGraph
+            // 
+            chartArea2.Name = "ChartArea1";
+            this.transformationGraph.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.transformationGraph.Legends.Add(legend2);
+            this.transformationGraph.Location = new System.Drawing.Point(242, 483);
+            this.transformationGraph.Name = "transformationGraph";
+            this.transformationGraph.Size = new System.Drawing.Size(706, 236);
+            this.transformationGraph.TabIndex = 21;
+            this.transformationGraph.Text = "Enzyme activity";
+            // 
+            // transformResults
+            // 
+            this.transformResults.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.transformResults.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.transformResults.Font = new System.Drawing.Font("Palanquin Light", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(186)));
+            this.transformResults.Location = new System.Drawing.Point(241, 83);
+            this.transformResults.Margin = new System.Windows.Forms.Padding(2);
+            this.transformResults.Name = "transformResults";
+            this.transformResults.Size = new System.Drawing.Size(1040, 398);
+            this.transformResults.TabIndex = 22;
+            this.transformResults.UseCompatibleStateImageBehavior = false;
             // 
             // Form1
             // 
@@ -254,7 +371,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
             this.ClientSize = new System.Drawing.Size(1280, 720);
+            this.Controls.Add(this.transformResults);
+            this.Controls.Add(this.transformationGraph);
             this.Controls.Add(this.AdvancedSettings);
+            this.Controls.Add(this.AdvancedSettingsButton);
             this.Controls.Add(this.TransformationSwitch);
             this.Controls.Add(this.resetButton);
             this.Controls.Add(this.resultsGraph);
@@ -280,6 +400,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.MinimizeButton)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.resultsGraph)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.itcdata_BG)).EndInit();
+            this.AdvancedSettings.ResumeLayout(false);
+            this.AdvancedSettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.transformationGraph)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -304,7 +427,17 @@
         private System.Windows.Forms.PictureBox itcdata_BG;
         private System.Windows.Forms.Button resetButton;
         private System.Windows.Forms.Button TransformationSwitch;
-        private System.Windows.Forms.Button AdvancedSettings;
+        private System.Windows.Forms.Button AdvancedSettingsButton;
+        private System.Windows.Forms.GroupBox AdvancedSettings;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox textBox8;
+        private System.Windows.Forms.TextBox textBox7;
+        private System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.DataVisualization.Charting.Chart transformationGraph;
+        private System.Windows.Forms.ListView transformResults;
     }
 }
 

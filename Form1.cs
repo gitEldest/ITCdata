@@ -20,7 +20,9 @@ namespace ITCdata
         List<double> averageHeatDeviation = new List<double>();
         List<double> injStartValue = new List<double>();
         List<double> injEndValue = new List<double>();
+        List<double> remainingSubstrate = new List<double>();
         List<Experiment> experimentList = new List<Experiment>();
+
         double rS;
         double intercept;
         double slope;
@@ -33,6 +35,7 @@ namespace ITCdata
         int injAmount;
         double injConc;
         int injNumber;
+        private double totalArea;
 
         private bool activityHidden;
         private string baselineMessage;
@@ -52,7 +55,13 @@ namespace ITCdata
             InitializeComponent();
 
            activityHidden = false;
-            baselineDriftTolerance = 4;
+            AdvancedSettings.Hide();
+            transformationGraph.Hide();
+            transformResults.Hide();
+            transformResults.View = View.Details;
+            transformResults.MultiSelect = true;
+            transformResults.LabelEdit = true;
+            baselineDriftTolerance = 3;
             signalNoiseTolerance = 5;
             results.View = View.Details;
             results.MultiSelect = true;
@@ -61,6 +70,8 @@ namespace ITCdata
             results.Columns.Add("R-squared", -2, HorizontalAlignment.Left);
             results.Columns.Add("Experiment", -2, HorizontalAlignment.Left);
             results.Columns.Add("Comments", -2, HorizontalAlignment.Left);
+            transformResults.Columns.Add("Remaining substrate", -2, HorizontalAlignment.Left);
+            transformResults.Columns.Add("Heat rate", -2, HorizontalAlignment.Left);
             results.KeyDown += results_KeyDown;
             textBox1.Validating += TextValidating;
             textBox3.Validating += TextValidating;
@@ -120,6 +131,67 @@ namespace ITCdata
         {
             Close();
         }
+        private void TotalTransformation(string fileName, int fileNumber)
+        {
+
+            //flip, et saaks võrrelda vana ITC-ga
+            for (int c = 0; c < heat.Count; c++)
+            {
+                heat[c][fileNumber] = heat[c][fileNumber] * -1;
+            }
+
+            //baseline
+            baseline = 0;
+            for (int a = 0; a < initialDelay; a++)
+            {
+                baseline += heat[a][fileNumber];
+            }
+            baseline = baseline / initialDelay;
+
+            //baseline maha lahutada + total area + leiab max heatrate
+            totalArea = 0;
+            double maxValue = 0;
+            int indexOfMax = 0;
+            for (int a = initialDelay; a < heat.Count; a++)
+            {
+                heat[a][fileNumber] -= baseline;
+                Console.WriteLine("FILENUMBER: " + fileNumber + " LINE: " + a + " HEAT:" + heat[a][fileNumber]);
+                //jätta välja negatiivsed väärtused
+                if (heat[a][fileNumber] > 0)
+                {
+                    totalArea += heat[a][fileNumber];
+                }
+                if(heat[a][fileNumber] > maxValue)
+                {
+                    maxValue = heat[a][fileNumber];
+                    indexOfMax = a;
+                }
+            }
+            //Kogu pindala - pindala antud ajahetkeni = järelejäänud substraat
+            for (int a = initialDelay; a < heat.Count; a++)
+            {
+                double currentArea = 0;
+                for(int i = initialDelay; i <= a; i++ )
+                    {
+                    currentArea += heat[i][fileNumber];
+                    }
+                remainingSubstrate.Add(totalArea - currentArea);
+                ListViewItem remSub = new ListViewItem((totalArea - currentArea).ToString("0.00000"), 0);
+                remSub.SubItems.Add(heat[a][fileNumber].ToString("0.0000"));
+                transformResults.Items.Add(remSub);
+            }
+            Series series1 = new Series { Name = titles[fileNumber], ChartType = SeriesChartType.Line, BorderWidth = 2 };
+            transformationGraph.ChartAreas[0].AxisX.Minimum = 0;
+            transformationGraph.ChartAreas[0].AxisY.Minimum = 0;
+
+            for (int b = indexOfMax-initialDelay; b < remainingSubstrate.Count; b++)
+            {
+                series1.Points.AddXY(remainingSubstrate[b],heat[b+initialDelay][fileNumber]);
+            }
+            transformationGraph.Series.Add(series1);
+            remainingSubstrate.Clear();
+        }
+        
         private void LinearRegression(string fileName, int fileNumber)
         {
             baselineMessage = "";
@@ -211,6 +283,7 @@ namespace ITCdata
             intercept = meanY - ((sCo / ssX) * meanX);
             slope = sCo / ssX;
 
+            //Baseline drift evaluation
             //Hetkel jagab läbi ainult ühe STDEV väärtusega, mis on leitud esimese süsti põhjal
             int baseInj = 0;
             for (int i = 0; i < injAmount; i++)
@@ -231,7 +304,7 @@ namespace ITCdata
             experimentList.Add(experiment);
 
             //Andmed graafikule
-            DrawPlot(fileNumber);
+            DrawActivityPlot(fileNumber);
             //Temp listid tühjaks järgmiseks katseks
             averageHeat.Clear();
             averageHeatDeviation.Clear();
@@ -287,26 +360,33 @@ namespace ITCdata
         {
             if (e.Control && e.KeyCode == Keys.C)
             {
-                CopyToClipBoard();
+                CopyToClipBoard(1);
             }
 
         }
-        private void CopyToClipBoard()
+        private void CopyToClipBoard(int mode)
         {
-            var builder = new StringBuilder();
-            foreach (ListViewItem item in results.SelectedItems)
+            if (mode == 1)
             {
-                builder.AppendLine(item.Text);
+                var builder = new StringBuilder();
+                foreach (ListViewItem item in results.SelectedItems)
+                {
+                    builder.AppendLine(item.Text);
+                }
+                //Kontrollib, et valik poleks tühi
+                if (string.IsNullOrEmpty(builder.ToString())) { }
+                else
+                {
+                    Clipboard.SetText(builder.ToString());
+                }
             }
-            //Kontrollib, et valik poleks tühi
-            if (string.IsNullOrEmpty(builder.ToString())) { }
-            else
+            else if (mode == 2)
             {
-                Clipboard.SetText(builder.ToString());
+
             }
         }
 
-        private void DrawPlot(int ID)
+        private void DrawActivityPlot(int ID)
         {
             Series series1 = new Series { Name = experimentList[ID].title, ChartType = SeriesChartType.Point, MarkerSize = 7 };
             Series trend = new Series { Name = "", ChartType = SeriesChartType.Line };
@@ -336,7 +416,7 @@ namespace ITCdata
             {
                 //Ignob errorit, lubab sama nimega tulemusi panna graafikule, tulevikus lisada ID lõppu nimele
             }
-        }//DrawPlot
+        }//DrawActivityPlot
 
         private void SelectItems(object sender, EventArgs e) {
             resultsGraph.Series.Clear();
@@ -345,7 +425,7 @@ namespace ITCdata
             foreach (ListViewItem item in results.SelectedItems)
             { 
                 ID = experimentList.Count - item.Index - 1;
-                DrawPlot(ID);
+                DrawActivityPlot(ID);
             }
         }//SelectItems
 
@@ -360,9 +440,9 @@ namespace ITCdata
             }
         }//OpenDialog
 
-        private void CalculateButton_Click(object sender, EventArgs e)
+        private void ParseData()
         {
-           resultsGraph.Series.Clear();
+            resultsGraph.Series.Clear();
             initialDelay = int.Parse(textBox1.Text) - 5;
             injLength = int.Parse(textBox2.Text);
             injAmount = int.Parse(textBox4.Text);
@@ -375,7 +455,7 @@ namespace ITCdata
                 {
                     parser.SetDelimiters(",");
                     List<string> titlesParser = parser.ReadFields().ToList();
-                    for(int x = 0; x< titlesParser.Count; x++)
+                    for (int x = 0; x < titlesParser.Count; x++)
                     {
                         if (x % 2 == 0)
                         {
@@ -391,25 +471,33 @@ namespace ITCdata
                         {
                             if (a % 2 == 0)
                             {
-                                tempList.Add(double.Parse(fields[a-1], System.Globalization.CultureInfo.InvariantCulture)); //0 - aeg, pole vaja; 1 - soojus
+                                tempList.Add(double.Parse(fields[a - 1], System.Globalization.CultureInfo.InvariantCulture)); //0 - aeg, pole vaja; 1 - soojus
                             }
                         }
-                        heat.Add(tempList);    
-                    }
-                    for (int d = 0; d < titles.Count;  d++) {
-                        LinearRegression(sFileNames[i], d);
-                        ListViewItem item = new ListViewItem(slope.ToString("0.000"), 0);
-                        item.SubItems.Add(rS.ToString("0.000"));
-                        item.SubItems.Add(titles[d]);
-                        item.SubItems.Add(CheckSignal() + " " + baselineMessage);
-                        results.Items.Insert(0, item);
-                        results.Columns[2].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                        heat.Add(tempList);
                     }
                 }
             }
-            heat.Clear();
-            titles.Clear();
-        }//CalculateButton_Click
+        }//ParseData
+        private void CalculateButton_Click(object sender, EventArgs e)
+                {
+                    ParseData();
+            for (int i = 0; i < sFileNames.Count; i++)
+            {
+                for (int d = 0; d < titles.Count; d++)
+                {
+                    LinearRegression(sFileNames[i], d);
+                    ListViewItem item = new ListViewItem(slope.ToString("0.000"), 0);
+                    item.SubItems.Add(rS.ToString("0.000"));
+                    item.SubItems.Add(titles[d]);
+                    item.SubItems.Add(CheckSignal() + " " + baselineMessage);
+                    results.Items.Insert(0, item);
+                    results.Columns[2].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                }
+            }
+                    heat.Clear();
+                    titles.Clear();
+                }//CalculateButton
 
         private string CheckSignal() {
             if (signalNoise >= signalNoiseTolerance)
@@ -428,6 +516,18 @@ namespace ITCdata
         private void TransformationSwitch_Click(object sender, EventArgs e)
         {
             ToggleEnzymeActivity();
+            ParseData();
+            transformationGraph.Show();
+            transformResults.Show();
+            for (int i = 0; i < sFileNames.Count; i++)
+            {
+                for (int d = 0; d < titles.Count; d++)
+                {
+                    TotalTransformation(sFileNames[i], d);
+                }
+            }
+            heat.Clear();
+            titles.Clear();
         }
         private void ToggleEnzymeActivity()
         {
@@ -444,10 +544,16 @@ namespace ITCdata
                 activityHidden = false;
             }
         }
-
         private void AdvancedSettings_Click(object sender, EventArgs e)
         {
-            ToggleEnzymeActivity();
+            AdvancedSettings.Show();
+            AdvancedSettings.Enabled = true;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            AdvancedSettings.Hide();
+            AdvancedSettings.Enabled = false;
         }
     }//end class Form1
 } //end namespace ITCdata
