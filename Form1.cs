@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -54,7 +55,7 @@ namespace ITCdata
         {
             InitializeComponent();
 
-           activityHidden = false;
+            activityHidden = false;
             AdvancedSettings.Hide();
             transformationGraph.Hide();
             transformResults.Hide();
@@ -96,6 +97,8 @@ namespace ITCdata
             itcdata_BG.MouseDown += Form1_MouseDown;
             resultsGraph.MouseDown += Form1_MouseDown;
             CalculateButton.Image = CalculateList.Images[0];
+            transformationButton.Image = TransformationButtonList.Images[0];
+            activityButton.Image = activityButtonList.Images[1];
 
         }
         private void Select_MouseHover(object sender, EventArgs e)
@@ -513,35 +516,27 @@ namespace ITCdata
             resultsGraph.Series.Clear();     
         }
 
-        private void TransformationSwitch_Click(object sender, EventArgs e)
-        {
-            ToggleEnzymeActivity();
-            ParseData();
-            transformationGraph.Show();
-            transformResults.Show();
-            for (int i = 0; i < sFileNames.Count; i++)
-            {
-                for (int d = 0; d < titles.Count; d++)
-                {
-                    TotalTransformation(sFileNames[i], d);
-                }
-            }
-            heat.Clear();
-            titles.Clear();
-        }
-        private void ToggleEnzymeActivity()
+        private void ToggleMenu()
         {
             if (activityHidden == false)
             {
                 results.Hide();
                 resultsGraph.Hide();
+                activityMenu.Hide();
+                activityMenu.Enabled = false;
                 activityHidden = true;
+                activityButton.Image = activityButtonList.Images[0];
+                transformationButton.Image = TransformationButtonList.Images[1];
             }
             else
             {
                 results.Show();
                 resultsGraph.Show();
+                activityMenu.Show();
                 activityHidden = false;
+                activityMenu.Enabled = true;
+                activityButton.Image = activityButtonList.Images[1];
+                transformationButton.Image = TransformationButtonList.Images[0];
             }
         }
         private void AdvancedSettings_Click(object sender, EventArgs e)
@@ -555,5 +550,29 @@ namespace ITCdata
             AdvancedSettings.Hide();
             AdvancedSettings.Enabled = false;
         }
+
+        private void transformationButton_Click_1(object sender, EventArgs e)
+        {
+            ToggleMenu();
+            /* ParseData();
+             transformationGraph.Show();
+             transformResults.Show();
+             for (int i = 0; i < sFileNames.Count; i++)
+             {
+                 for (int d = 0; d < titles.Count; d++)
+                 {
+                     TotalTransformation(sFileNames[i], d);
+                 }
+             }
+             heat.Clear();
+             titles.Clear();
+             */
+        }
+
+        private void activityButton_Click(object sender, EventArgs e)
+        {
+            ToggleMenu();
+        }
     }//end class Form1
+    
 } //end namespace ITCdata
