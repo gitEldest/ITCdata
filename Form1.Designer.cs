@@ -30,12 +30,12 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea13 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend13 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea14 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend14 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.refValueBox = new System.Windows.Forms.TextBox();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
@@ -68,6 +68,9 @@
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.pictureBox5 = new System.Windows.Forms.PictureBox();
             this.activityMenu = new System.Windows.Forms.Panel();
+            this.transformationMenu = new System.Windows.Forms.Panel();
+            this.transformInitDelayBox = new System.Windows.Forms.TextBox();
+            this.pictureBox6 = new System.Windows.Forms.PictureBox();
             this.TransformationButtonList = new System.Windows.Forms.ImageList(this.components);
             this.transformationButton = new System.Windows.Forms.PictureBox();
             this.activityButton = new System.Windows.Forms.PictureBox();
@@ -86,19 +89,21 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
             this.activityMenu.SuspendLayout();
+            this.transformationMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.transformationButton)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.activityButton)).BeginInit();
             this.SuspendLayout();
             // 
-            // textBox5
+            // refValueBox
             // 
-            this.textBox5.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox5.Font = new System.Drawing.Font("Palanquin Light", 11F);
-            this.textBox5.Location = new System.Drawing.Point(43, 371);
-            this.textBox5.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(110, 27);
-            this.textBox5.TabIndex = 6;
+            this.refValueBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.refValueBox.Font = new System.Drawing.Font("Palanquin Light", 11F);
+            this.refValueBox.Location = new System.Drawing.Point(43, 371);
+            this.refValueBox.Margin = new System.Windows.Forms.Padding(2);
+            this.refValueBox.Name = "refValueBox";
+            this.refValueBox.Size = new System.Drawing.Size(110, 27);
+            this.refValueBox.TabIndex = 6;
             // 
             // textBox4
             // 
@@ -215,10 +220,10 @@
             // 
             // resultsGraph
             // 
-            chartArea13.Name = "ChartArea1";
-            this.resultsGraph.ChartAreas.Add(chartArea13);
-            legend13.Name = "Legend1";
-            this.resultsGraph.Legends.Add(legend13);
+            chartArea1.Name = "ChartArea1";
+            this.resultsGraph.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.resultsGraph.Legends.Add(legend1);
             this.resultsGraph.Location = new System.Drawing.Point(242, 483);
             this.resultsGraph.Name = "resultsGraph";
             this.resultsGraph.Size = new System.Drawing.Size(706, 236);
@@ -340,10 +345,10 @@
             // 
             // transformationGraph
             // 
-            chartArea14.Name = "ChartArea1";
-            this.transformationGraph.ChartAreas.Add(chartArea14);
-            legend14.Name = "Legend1";
-            this.transformationGraph.Legends.Add(legend14);
+            chartArea2.Name = "ChartArea1";
+            this.transformationGraph.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.transformationGraph.Legends.Add(legend2);
             this.transformationGraph.Location = new System.Drawing.Point(242, 483);
             this.transformationGraph.Name = "transformationGraph";
             this.transformationGraph.Size = new System.Drawing.Size(706, 236);
@@ -434,7 +439,7 @@
             this.activityMenu.Controls.Add(this.textBox2);
             this.activityMenu.Controls.Add(this.textBox3);
             this.activityMenu.Controls.Add(this.textBox4);
-            this.activityMenu.Controls.Add(this.textBox5);
+            this.activityMenu.Controls.Add(this.refValueBox);
             this.activityMenu.Controls.Add(this.pictureBox1);
             this.activityMenu.Controls.Add(this.pictureBox2);
             this.activityMenu.Controls.Add(this.pictureBox3);
@@ -444,6 +449,37 @@
             this.activityMenu.Name = "activityMenu";
             this.activityMenu.Size = new System.Drawing.Size(200, 418);
             this.activityMenu.TabIndex = 29;
+            // 
+            // transformationMenu
+            // 
+            this.transformationMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.transformationMenu.Controls.Add(this.transformInitDelayBox);
+            this.transformationMenu.Controls.Add(this.pictureBox6);
+            this.transformationMenu.Location = new System.Drawing.Point(22, 153);
+            this.transformationMenu.Name = "transformationMenu";
+            this.transformationMenu.Size = new System.Drawing.Size(200, 103);
+            this.transformationMenu.TabIndex = 30;
+            // 
+            // transformInitDelayBox
+            // 
+            this.transformInitDelayBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.transformInitDelayBox.Font = new System.Drawing.Font("Palanquin Light", 11F);
+            this.transformInitDelayBox.Location = new System.Drawing.Point(43, 55);
+            this.transformInitDelayBox.Margin = new System.Windows.Forms.Padding(2);
+            this.transformInitDelayBox.Name = "transformInitDelayBox";
+            this.transformInitDelayBox.Size = new System.Drawing.Size(110, 27);
+            this.transformInitDelayBox.TabIndex = 2;
+            // 
+            // pictureBox6
+            // 
+            this.pictureBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.pictureBox6.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox6.Image")));
+            this.pictureBox6.Location = new System.Drawing.Point(22, 8);
+            this.pictureBox6.Name = "pictureBox6";
+            this.pictureBox6.Size = new System.Drawing.Size(150, 80);
+            this.pictureBox6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox6.TabIndex = 24;
+            this.pictureBox6.TabStop = false;
             // 
             // TransformationButtonList
             // 
@@ -485,9 +521,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
             this.ClientSize = new System.Drawing.Size(1280, 720);
+            this.Controls.Add(this.transformationMenu);
             this.Controls.Add(this.activityButton);
             this.Controls.Add(this.transformationButton);
-            this.Controls.Add(this.transformResults);
             this.Controls.Add(this.AdvancedSettings);
             this.Controls.Add(this.AdvancedSettingsButton);
             this.Controls.Add(this.resetButton);
@@ -500,6 +536,7 @@
             this.Controls.Add(this.label8);
             this.Controls.Add(this.transformationGraph);
             this.Controls.Add(this.activityMenu);
+            this.Controls.Add(this.transformResults);
             this.Controls.Add(this.itcdata_BG);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Margin = new System.Windows.Forms.Padding(2);
@@ -521,6 +558,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).EndInit();
             this.activityMenu.ResumeLayout(false);
             this.activityMenu.PerformLayout();
+            this.transformationMenu.ResumeLayout(false);
+            this.transformationMenu.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.transformationButton)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.activityButton)).EndInit();
             this.ResumeLayout(false);
@@ -534,7 +574,7 @@
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox textBox4;
-        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TextBox refValueBox;
         private System.Windows.Forms.ImageList SelectList;
         private System.Windows.Forms.PictureBox SelectButton;
         private System.Windows.Forms.PictureBox CalculateButton;
@@ -567,6 +607,9 @@
         private System.Windows.Forms.PictureBox transformationButton;
         private System.Windows.Forms.PictureBox activityButton;
         private System.Windows.Forms.ImageList activityButtonList;
+        private System.Windows.Forms.Panel transformationMenu;
+        private System.Windows.Forms.TextBox transformInitDelayBox;
+        private System.Windows.Forms.PictureBox pictureBox6;
     }
 }
 

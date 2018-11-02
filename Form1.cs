@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -38,10 +36,13 @@ namespace ITCdata
         int injNumber;
         private double totalArea;
 
-        private bool activityHidden;
         private string baselineMessage;
         private int baselineDriftTolerance;
         private int signalNoiseTolerance;
+        private int mode;
+        private int transformInitialDelay;
+        private double percentValue;
+        private double refValue;
 
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
@@ -54,11 +55,9 @@ namespace ITCdata
         public Form1()
         {
             InitializeComponent();
-
-            activityHidden = false;
+            mode = 0;
+            ToggleMenu();
             AdvancedSettings.Hide();
-            transformationGraph.Hide();
-            transformResults.Hide();
             transformResults.View = View.Details;
             transformResults.MultiSelect = true;
             transformResults.LabelEdit = true;
@@ -68,18 +67,19 @@ namespace ITCdata
             results.MultiSelect = true;
             results.LabelEdit = true;
             results.Columns.Add("Slope", -2, HorizontalAlignment.Left);
+            results.Columns.Add("%", -2, HorizontalAlignment.Left);
             results.Columns.Add("R-squared", -2, HorizontalAlignment.Left);
             results.Columns.Add("Experiment", -2, HorizontalAlignment.Left);
             results.Columns.Add("Comments", -2, HorizontalAlignment.Left);
             transformResults.Columns.Add("Remaining substrate", -2, HorizontalAlignment.Left);
             transformResults.Columns.Add("Heat rate", -2, HorizontalAlignment.Left);
             results.KeyDown += results_KeyDown;
+            transformResults.KeyDown += results_KeyDown;
             textBox1.Validating += TextValidating;
             textBox3.Validating += TextValidating;
             textBox2.Validating += TextValidating;
             textBox4.Validating += TextValidating;
-            textBox5.Validating += TextValidating;
-            textBox5.Text = "40";
+            refValueBox.Validating += TextValidating;
             peakDelay = 40;
             results.MouseClick += SelectItems;
 
@@ -145,17 +145,17 @@ namespace ITCdata
 
             //baseline
             baseline = 0;
-            for (int a = 0; a < initialDelay; a++)
+            for (int a = 0; a < transformInitialDelay; a++)
             {
                 baseline += heat[a][fileNumber];
             }
-            baseline = baseline / initialDelay;
+            baseline = baseline / transformInitialDelay;
 
             //baseline maha lahutada + total area + leiab max heatrate
             totalArea = 0;
             double maxValue = 0;
             int indexOfMax = 0;
-            for (int a = initialDelay; a < heat.Count; a++)
+            for (int a = transformInitialDelay; a < heat.Count; a++)
             {
                 heat[a][fileNumber] -= baseline;
                 Console.WriteLine("FILENUMBER: " + fileNumber + " LINE: " + a + " HEAT:" + heat[a][fileNumber]);
@@ -171,10 +171,10 @@ namespace ITCdata
                 }
             }
             //Kogu pindala - pindala antud ajahetkeni = järelejäänud substraat
-            for (int a = initialDelay; a < heat.Count; a++)
+            for (int a = transformInitialDelay; a < heat.Count; a++)
             {
                 double currentArea = 0;
-                for(int i = initialDelay; i <= a; i++ )
+                for(int i = transformInitialDelay; i <= a; i++ )
                     {
                     currentArea += heat[i][fileNumber];
                     }
@@ -187,9 +187,9 @@ namespace ITCdata
             transformationGraph.ChartAreas[0].AxisX.Minimum = 0;
             transformationGraph.ChartAreas[0].AxisY.Minimum = 0;
 
-            for (int b = indexOfMax-initialDelay; b < remainingSubstrate.Count; b++)
+            for (int b = indexOfMax- transformInitialDelay; b < remainingSubstrate.Count; b++)
             {
-                series1.Points.AddXY(remainingSubstrate[b],heat[b+initialDelay][fileNumber]);
+                series1.Points.AddXY(remainingSubstrate[b],heat[b+ transformInitialDelay][fileNumber]);
             }
             transformationGraph.Series.Add(series1);
             remainingSubstrate.Clear();
@@ -285,7 +285,9 @@ namespace ITCdata
             rS = dblR * dblR;
             intercept = meanY - ((sCo / ssX) * meanX);
             slope = sCo / ssX;
-
+            if (refValue > 0) {
+                percentValue = (slope / refValue) * 100;
+            }
             //Baseline drift evaluation
             //Hetkel jagab läbi ainult ühe STDEV väärtusega, mis on leitud esimese süsti põhjal
             int baseInj = 0;
@@ -329,8 +331,6 @@ namespace ITCdata
         }
         public bool ValidNumber(object sender, string number, out string errorMsg)
         {
-            int value;
-            double dvalue;
             TextBox tb = (TextBox)sender;
             if (number.Length == 0 && tb != textBox1)
             {
@@ -344,14 +344,23 @@ namespace ITCdata
             }
             if (tb == textBox3)
             {
-                if (double.TryParse(tb.Text, out dvalue))
+                if (double.TryParse(tb.Text, out double dvalue))
                 {
                         errorMsg = "";
                         injConc = dvalue;
                     return true;
                 }
             }
-            else if (int.TryParse(tb.Text, out value))
+            if (tb == refValueBox)
+            {
+                if (double.TryParse(tb.Text, out double rvalue))
+                {
+                    errorMsg = "";
+                    refValue = rvalue;
+                    return true;
+                }
+            }
+            else if (int.TryParse(tb.Text, out int value))
             {
                 errorMsg = "";
                 return true;
@@ -363,13 +372,13 @@ namespace ITCdata
         {
             if (e.Control && e.KeyCode == Keys.C)
             {
-                CopyToClipBoard(1);
+                CopyToClipBoard();
             }
 
         }
-        private void CopyToClipBoard(int mode)
+        private void CopyToClipBoard()
         {
-            if (mode == 1)
+            if (mode == 0)
             {
                 var builder = new StringBuilder();
                 foreach (ListViewItem item in results.SelectedItems)
@@ -383,9 +392,20 @@ namespace ITCdata
                     Clipboard.SetText(builder.ToString());
                 }
             }
-            else if (mode == 2)
+            else if (mode == 1)
             {
-
+                transformResults.FullRowSelect = true;
+                var builder = new StringBuilder();
+                foreach (ListViewItem item in transformResults.SelectedItems)
+                {
+                    builder.AppendLine(item.Text + "\t" + item.SubItems[1].Text);
+                }
+                //Kontrollib, et valik poleks tühi
+                if (string.IsNullOrEmpty(builder.ToString())) { }
+                else
+                {
+                    Clipboard.SetText(builder.ToString());
+                }
             }
         }
 
@@ -445,11 +465,19 @@ namespace ITCdata
 
         private void ParseData()
         {
-            resultsGraph.Series.Clear();
-            initialDelay = int.Parse(textBox1.Text) - 5;
-            injLength = int.Parse(textBox2.Text);
-            injAmount = int.Parse(textBox4.Text);
-            peakDelay = int.Parse(textBox5.Text);
+            if (mode == 0)
+            {
+                resultsGraph.Series.Clear();
+                initialDelay = int.Parse(textBox1.Text) - 5;
+                injLength = int.Parse(textBox2.Text);
+                injAmount = int.Parse(textBox4.Text);
+            }
+            if (mode == 1)
+            {
+                transformationGraph.Series.Clear();
+                transformInitialDelay = int.Parse(transformInitDelayBox.Text) - 5;
+
+            }
             for (int i = 0; i < sFileNames.Count; i++)
             {
                 titles.Clear();
@@ -470,6 +498,7 @@ namespace ITCdata
                     {
                         List<string> fields = parser.ReadFields().ToList();
                         List<double> tempList = new List<double>();
+                        
                         for (int a = 1; a <= fields.Count; a++)
                         {
                             if (a % 2 == 0)
@@ -483,21 +512,46 @@ namespace ITCdata
             }
         }//ParseData
         private void CalculateButton_Click(object sender, EventArgs e)
-                {
-                    ParseData();
+        {
+            ParseData();
+
+            switch (mode) {
+                //Enzyme activity
+                case 0:
             for (int i = 0; i < sFileNames.Count; i++)
             {
                 for (int d = 0; d < titles.Count; d++)
                 {
                     LinearRegression(sFileNames[i], d);
                     ListViewItem item = new ListViewItem(slope.ToString("0.000"), 0);
+                            if (refValue == 0)
+                            {
+                                item.SubItems.Add("No reference");
+                            }
+                            else if (refValue > 0)
+                            {
+                                item.SubItems.Add(percentValue.ToString("0.0"));
+                            }
                     item.SubItems.Add(rS.ToString("0.000"));
                     item.SubItems.Add(titles[d]);
                     item.SubItems.Add(CheckSignal() + " " + baselineMessage);
                     results.Items.Insert(0, item);
-                    results.Columns[2].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                }
+                    results.Columns[3].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                    results.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                        }
             }
+                    break;
+                //Total hydrolysis transformation
+                case 1:
+                    for (int i = 0; i < sFileNames.Count; i++)
+                    {
+                        for (int d = 0; d < titles.Count; d++)
+                        {
+                            TotalTransformation(sFileNames[i], d);
+                        }
+                    }
+                    break;
+        }
                     heat.Clear();
                     titles.Clear();
                 }//CalculateButton
@@ -518,27 +572,40 @@ namespace ITCdata
 
         private void ToggleMenu()
         {
-            if (activityHidden == false)
+            switch (mode)
             {
-                results.Hide();
-                resultsGraph.Hide();
-                activityMenu.Hide();
-                activityMenu.Enabled = false;
-                activityHidden = true;
-                activityButton.Image = activityButtonList.Images[0];
-                transformationButton.Image = TransformationButtonList.Images[1];
+                case 0:
+                    results.Show();
+                    resultsGraph.Show();
+                    activityMenu.Show();
+                    activityMenu.Enabled = true;
+                    resultsGraph.Enabled = true;
+                    results.Enabled = true;
+                    transformResults.Enabled = false;
+                    transformResults.Hide();
+                    transformationGraph.Enabled = false;
+                    transformationGraph.Hide();
+                    transformationMenu.Hide();
+                    transformationMenu.Enabled = false;
+                    activityButton.Image = activityButtonList.Images[1];
+                    transformationButton.Image = TransformationButtonList.Images[0];
+                    break;
+                case 1:
+                    results.Hide();
+                    resultsGraph.Hide();
+                    activityMenu.Hide();
+                    activityMenu.Enabled = false;
+                    activityButton.Image = activityButtonList.Images[0];
+                    transformationButton.Image = TransformationButtonList.Images[1];
+                    transformationGraph.Enabled = true;
+                    transformationGraph.Show();
+                    transformResults.Show();
+                    transformResults.Enabled = true;
+                    transformationMenu.Show();
+                    transformationMenu.Enabled = true;
+                    break;
             }
-            else
-            {
-                results.Show();
-                resultsGraph.Show();
-                activityMenu.Show();
-                activityHidden = false;
-                activityMenu.Enabled = true;
-                activityButton.Image = activityButtonList.Images[1];
-                transformationButton.Image = TransformationButtonList.Images[0];
-            }
-        }
+        }//ToggleMenu
         private void AdvancedSettings_Click(object sender, EventArgs e)
         {
             AdvancedSettings.Show();
@@ -553,24 +620,13 @@ namespace ITCdata
 
         private void transformationButton_Click_1(object sender, EventArgs e)
         {
+            mode = 1;
             ToggleMenu();
-            /* ParseData();
-             transformationGraph.Show();
-             transformResults.Show();
-             for (int i = 0; i < sFileNames.Count; i++)
-             {
-                 for (int d = 0; d < titles.Count; d++)
-                 {
-                     TotalTransformation(sFileNames[i], d);
-                 }
-             }
-             heat.Clear();
-             titles.Clear();
-             */
         }
 
         private void activityButton_Click(object sender, EventArgs e)
         {
+            mode = 0;
             ToggleMenu();
         }
     }//end class Form1
