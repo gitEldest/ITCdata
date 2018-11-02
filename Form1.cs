@@ -14,35 +14,28 @@ namespace ITCdata
         List<string> sFileNames = new List<string>();
         List<string> titles = new List<string>();
         List<List<double>> heat = new List<List<double>>();
-        List<double> conc = new List<double>();
-        List<double> averageHeat = new List<double>();
-        List<double> averageHeatDeviation = new List<double>();
         List<double> injStartValue = new List<double>();
         List<double> injEndValue = new List<double>();
         List<double> remainingSubstrate = new List<double>();
         List<Experiment> experimentList = new List<Experiment>();
 
-        double rS;
-        double intercept;
-        double slope;
-        double baseline;
-        double heat_STDEV;
-        double signalNoise;
-        int initialDelay;
-        int injLength;
-        int peakDelay;
-        int injAmount;
-        double injConc;
-        int injNumber;
+        private double heat_STDEV;
+        private double signalNoise;
+        private double percentValue;
+        private double refValue;
+        private double injConc;
         private double totalArea;
-
+        private int initialDelay;
+        private int injLength;
+        private int peakDelay;
+        private int injAmount;
+        private int injNumber;
         private string baselineMessage;
         private int baselineDriftTolerance;
         private int signalNoiseTolerance;
         private int mode;
         private int transformInitialDelay;
-        private double percentValue;
-        private double refValue;
+        
 
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
@@ -93,7 +86,6 @@ namespace ITCdata
             SelectButton.MouseLeave += Select_MouseLeave;
             SelectButton.Click += OpenDialog;
             this.MouseDown += Form1_MouseDown;
-            results.MouseDown += Form1_MouseDown;
             itcdata_BG.MouseDown += Form1_MouseDown;
             resultsGraph.MouseDown += Form1_MouseDown;
             CalculateButton.Image = CalculateList.Images[0];
@@ -144,7 +136,7 @@ namespace ITCdata
             }
 
             //baseline
-            baseline = 0;
+            double baseline = 0;
             for (int a = 0; a < transformInitialDelay; a++)
             {
                 baseline += heat[a][fileNumber];
@@ -197,6 +189,9 @@ namespace ITCdata
         
         private void LinearRegression(string fileName, int fileNumber)
         {
+            List<double> averageHeat = new List<double>();
+            List<double> conc = new List<double>();
+            List<double> averageHeatDeviation = new List<double>();
             baselineMessage = "";
             //flip, et saaks võrrelda vana ITC-ga
             for (int c = 0; c < heat.Count; c++)
@@ -205,7 +200,7 @@ namespace ITCdata
             }
 
             //baseline
-            baseline = 0;
+            double baseline = 0;
             for (int a = initialDelay + peakDelay;a <= initialDelay + injLength; a++)
             {
                 baseline += heat[a][fileNumber];
@@ -282,9 +277,9 @@ namespace ITCdata
             var meanY = sumOfY / conc.Count;
             var dblR = rNumerator / Math.Sqrt(rDenom);
 
-            rS = dblR * dblR;
-            intercept = meanY - ((sCo / ssX) * meanX);
-            slope = sCo / ssX;
+            double rS = dblR * dblR;
+            double intercept = meanY - ((sCo / ssX) * meanX);
+            double slope = sCo / ssX;
             if (refValue > 0) {
                 percentValue = (slope / refValue) * 100;
             }
@@ -305,7 +300,7 @@ namespace ITCdata
             }
             baseInj = 0;
             //Data salvestamine 
-            Experiment experiment = new Experiment(titles[fileNumber],slope, intercept, injConc, averageHeat);
+            Experiment experiment = new Experiment(titles[fileNumber],slope, rS, intercept, injConc, averageHeat);
             experimentList.Add(experiment);
 
             //Andmed graafikule
@@ -523,7 +518,7 @@ namespace ITCdata
                 for (int d = 0; d < titles.Count; d++)
                 {
                     LinearRegression(sFileNames[i], d);
-                    ListViewItem item = new ListViewItem(slope.ToString("0.000"), 0);
+                    ListViewItem item = new ListViewItem(experimentList[d].slope.ToString("0.000"), 0);
                             if (refValue == 0)
                             {
                                 item.SubItems.Add("No reference");
@@ -532,7 +527,7 @@ namespace ITCdata
                             {
                                 item.SubItems.Add(percentValue.ToString("0.0"));
                             }
-                    item.SubItems.Add(rS.ToString("0.000"));
+                    item.SubItems.Add(experimentList[d].rSquared.ToString("0.000"));
                     item.SubItems.Add(titles[d]);
                     item.SubItems.Add(CheckSignal() + " " + baselineMessage);
                     results.Items.Insert(0, item);
