@@ -30,10 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.refValueBox = new System.Windows.Forms.TextBox();
             this.textBox4 = new System.Windows.Forms.TextBox();
@@ -53,9 +53,9 @@
             this.AdvancedSettingsButton = new System.Windows.Forms.Button();
             this.AdvancedSettings = new System.Windows.Forms.GroupBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.textBox8 = new System.Windows.Forms.TextBox();
-            this.textBox7 = new System.Windows.Forms.TextBox();
-            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.peakBox = new System.Windows.Forms.TextBox();
+            this.signalBox = new System.Windows.Forms.TextBox();
+            this.baselineBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -220,10 +220,10 @@
             // 
             // resultsGraph
             // 
-            chartArea1.Name = "ChartArea1";
-            this.resultsGraph.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.resultsGraph.Legends.Add(legend1);
+            chartArea5.Name = "ChartArea1";
+            this.resultsGraph.ChartAreas.Add(chartArea5);
+            legend5.Name = "Legend1";
+            this.resultsGraph.Legends.Add(legend5);
             this.resultsGraph.Location = new System.Drawing.Point(242, 483);
             this.resultsGraph.Name = "resultsGraph";
             this.resultsGraph.Size = new System.Drawing.Size(706, 236);
@@ -267,9 +267,9 @@
             // AdvancedSettings
             // 
             this.AdvancedSettings.Controls.Add(this.button1);
-            this.AdvancedSettings.Controls.Add(this.textBox8);
-            this.AdvancedSettings.Controls.Add(this.textBox7);
-            this.AdvancedSettings.Controls.Add(this.textBox6);
+            this.AdvancedSettings.Controls.Add(this.peakBox);
+            this.AdvancedSettings.Controls.Add(this.signalBox);
+            this.AdvancedSettings.Controls.Add(this.baselineBox);
             this.AdvancedSettings.Controls.Add(this.label3);
             this.AdvancedSettings.Controls.Add(this.label2);
             this.AdvancedSettings.Controls.Add(this.label1);
@@ -283,38 +283,39 @@
             // 
             // button1
             // 
-            this.button1.Font = new System.Drawing.Font("Palanquin Light", 8F);
+            this.button1.Font = new System.Drawing.Font("Arial Narrow", 6F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(186)));
             this.button1.Location = new System.Drawing.Point(143, 176);
             this.button1.Margin = new System.Windows.Forms.Padding(0);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(52, 22);
             this.button1.TabIndex = 6;
+            this.button1.Text = "Close";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // textBox8
+            // peakBox
             // 
-            this.textBox8.Font = new System.Drawing.Font("Palanquin Light", 8F);
-            this.textBox8.Location = new System.Drawing.Point(11, 156);
-            this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(100, 27);
-            this.textBox8.TabIndex = 5;
+            this.peakBox.Font = new System.Drawing.Font("Palanquin Light", 8F);
+            this.peakBox.Location = new System.Drawing.Point(11, 156);
+            this.peakBox.Name = "peakBox";
+            this.peakBox.Size = new System.Drawing.Size(100, 27);
+            this.peakBox.TabIndex = 5;
             // 
-            // textBox7
+            // signalBox
             // 
-            this.textBox7.Font = new System.Drawing.Font("Palanquin Light", 8F);
-            this.textBox7.Location = new System.Drawing.Point(11, 106);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(100, 27);
-            this.textBox7.TabIndex = 4;
+            this.signalBox.Font = new System.Drawing.Font("Palanquin Light", 8F);
+            this.signalBox.Location = new System.Drawing.Point(11, 106);
+            this.signalBox.Name = "signalBox";
+            this.signalBox.Size = new System.Drawing.Size(100, 27);
+            this.signalBox.TabIndex = 4;
             // 
-            // textBox6
+            // baselineBox
             // 
-            this.textBox6.Font = new System.Drawing.Font("Palanquin Light", 8F);
-            this.textBox6.Location = new System.Drawing.Point(11, 54);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(100, 27);
-            this.textBox6.TabIndex = 3;
+            this.baselineBox.Font = new System.Drawing.Font("Palanquin Light", 8F);
+            this.baselineBox.Location = new System.Drawing.Point(11, 54);
+            this.baselineBox.Name = "baselineBox";
+            this.baselineBox.Size = new System.Drawing.Size(100, 27);
+            this.baselineBox.TabIndex = 3;
             // 
             // label3
             // 
@@ -345,10 +346,10 @@
             // 
             // transformationGraph
             // 
-            chartArea2.Name = "ChartArea1";
-            this.transformationGraph.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.transformationGraph.Legends.Add(legend2);
+            chartArea6.Name = "ChartArea1";
+            this.transformationGraph.ChartAreas.Add(chartArea6);
+            legend6.Name = "Legend1";
+            this.transformationGraph.Legends.Add(legend6);
             this.transformationGraph.Location = new System.Drawing.Point(242, 483);
             this.transformationGraph.Name = "transformationGraph";
             this.transformationGraph.Size = new System.Drawing.Size(706, 236);
@@ -590,9 +591,9 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox8;
-        private System.Windows.Forms.TextBox textBox7;
-        private System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.TextBox peakBox;
+        private System.Windows.Forms.TextBox signalBox;
+        private System.Windows.Forms.TextBox baselineBox;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.DataVisualization.Charting.Chart transformationGraph;
         private System.Windows.Forms.ListView transformResults;
