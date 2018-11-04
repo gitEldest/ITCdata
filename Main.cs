@@ -439,16 +439,14 @@ namespace ITCdata
             }
         }
 
-        private void DrawActivityPlot(int ID)
-        {
+        private void DrawActivityPlot(int ID){
             Series series1 = new Series { Name = experimentList[ID].title, ChartType = SeriesChartType.Point, MarkerSize = 7 };
             Series trend = new Series { Name = "", ChartType = SeriesChartType.Line };
             resultsGraph.ChartAreas[0].AxisX.Minimum = 0;
             resultsGraph.ChartAreas[0].AxisY.Minimum = 0;
             series1.Points.AddXY(0, 0);
 
-            for (int b = 1; b < experimentList[ID].avgHeat.Count; b++)
-            {
+            for (int b = 1; b < experimentList[ID].avgHeat.Count; b++) {
                 series1.Points.AddXY(experimentList[ID].conc * b, experimentList[ID].avgHeat[b]);
             }
 
@@ -458,15 +456,12 @@ namespace ITCdata
             {
                 resultsGraph.ChartAreas[0].AxisY.Maximum = Math.Round(experimentList[ID].intercept + experimentList[ID].slope * experimentList[ID].conc * (experimentList[ID].avgHeat.Count - 1) + 1, 2, MidpointRounding.AwayFromZero);
             }
-
-            try
-            {
+            try{
                 trend.IsVisibleInLegend = false;
                 resultsGraph.Series.Add(trend);
                 resultsGraph.Series.Add(series1);
             }
-            catch (System.ArgumentException)
-            {
+            catch (System.ArgumentException) {
                 //Ignob errorit, lubab sama nimega tulemusi panna graafikule, tulevikus lisada ID lõppu nimele
             }
         }//DrawActivityPlot
@@ -486,14 +481,12 @@ namespace ITCdata
                     transformResults.Items.Add(remSub);
                 }
             //Draw graph
-            Series series1 = new Series { Name = transformList[ID].title, ChartType = SeriesChartType.Point, MarkerSize = 2 };
-            //transformationGraph.ChartAreas[0].AxisX.Minimum = 0;
-            //transformationGraph.ChartAreas[0].AxisY.Minimum = 0;
+            Series transformSeries = new Series { Name = transformList[ID].title, ChartType = SeriesChartType.Point, MarkerSize = 2 };
             for (int b = transformList[ID].indexMax - transformList[ID].iniDelay; b < transformList[ID].subRemaining.Count; b++)
             {
-                series1.Points.AddXY(transformList[ID].subRemaining[b], transformList[ID].heatRate[b + transformList[ID].iniDelay]);
+                transformSeries.Points.AddXY(transformList[ID].subRemaining[b], transformList[ID].heatRate[b + transformList[ID].iniDelay]);
             }
-            transformationGraph.Series.Add(series1);
+            transformationGraph.Series.Add(transformSeries);
 
         }//DrawTransformPlot
 
@@ -592,52 +585,51 @@ namespace ITCdata
                 }
             }
         }//ParseData
-        private void CalculateButton_Click(object sender, EventArgs e)
-        {
-            ParseData();
-            switch (mode) {
-                //Enzyme activity
-                case 0:
-                for (int d = 0; d < titles.Count; d++)
-                {
-                    LinearRegression(titles[d], d);
-                        if (exceptionThrown != true)
-                        {
-                            ListViewItem item = new ListViewItem(experimentList[experimentList.Count - 1].slope.ToString("0.000"), 0);
-                            if (refValue == 0)
-                            {
-                                item.SubItems.Add("");
-                            }
-                            else if (refValue > 0)
-                            {
-                                item.SubItems.Add(percentValue.ToString("0.0"));
-                            }
-                            DrawActivityPlot(experimentList.Count - 1);
-                            item.SubItems.Add(experimentList[experimentList.Count - 1].rSquared.ToString("0.000"));
-                            item.SubItems.Add(experimentList[experimentList.Count - 1].title);
-                            item.SubItems.Add(CheckSignal() + " " + baselineMessage);
-                            results.Items.Insert(0, item);
-                            results.Columns[3].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                            results.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                        }
+        private void CalculateButton_Click(object sender, EventArgs e){
+            if(sFileNames.Count == 0){
+                MessageBox.Show("Please select file(s)");
             }
-                    break;
-                //Total hydrolysis transformation
-                case 1:
-                        for (int d = 0; d < titles.Count; d++)
-                        {
+            if (sFileNames.Count != 0){
+                ParseData();
+                switch (mode){
+                    //Enzyme activity
+                    case 0:
+                        for (int d = 0; d < titles.Count; d++){
+                            LinearRegression(titles[d], d);
+                            if (exceptionThrown != true){
+                                ListViewItem item = new ListViewItem(experimentList[experimentList.Count - 1].slope.ToString("0.000"), 0);
+                                if (refValue == 0){
+                                    item.SubItems.Add("");
+                                }
+                                else if (refValue > 0){
+                                    item.SubItems.Add(percentValue.ToString("0.0"));
+                                }
+                                DrawActivityPlot(experimentList.Count - 1);
+                                item.SubItems.Add(experimentList[experimentList.Count - 1].rSquared.ToString("0.000"));
+                                item.SubItems.Add(experimentList[experimentList.Count - 1].title);
+                                item.SubItems.Add(CheckSignal() + " " + baselineMessage);
+                                results.Items.Insert(0, item);
+                                results.Columns[3].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                                results.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                            }
+                        }
+                        break;
+                    //Total hydrolysis transformation
+                    case 1:
+                        for (int d = 0; d < titles.Count; d++){
                             TotalTransformation(titles[d], d);
                         }
-                    break;
-        }
-                    heat.Clear();
-                    titles.Clear();
-            exceptionThrown = false;
+                        break;
+                }
+                heat.Clear();
+                titles.Clear();
+                exceptionThrown = false;
+                sFileNames.Clear();
+            }
                 }//CalculateButton
 
-        private string CheckSignal() {
-            if (signalNoise >= signalNoiseTolerance)
-            {
+        private string CheckSignal(){
+            if (signalNoise >= signalNoiseTolerance){
                 return "";
             }
             return "WARNING: S/N ratio is low: " + signalNoise.ToString("0.0");
@@ -694,26 +686,22 @@ namespace ITCdata
             }
         }
 
-        private void transformationButton_Click_1(object sender, EventArgs e)
-        {
+        private void transformationButton_Click_1(object sender, EventArgs e){
             mode = 1;
             ToggleMenu();
         }
 
-        private void activityButton_Click(object sender, EventArgs e)
-        {
+        private void activityButton_Click(object sender, EventArgs e){
             mode = 0;
             ToggleMenu();
         }
 
-        private void advancedSettingsButton_Click(object sender, EventArgs e)
-        {
+        private void advancedSettingsButton_Click(object sender, EventArgs e){
             AdvancedSettings.Show();
             AdvancedSettings.Enabled = true;
         }
 
-        private void closeSettingsButton_Click(object sender, EventArgs e)
-        {
+        private void closeSettingsButton_Click(object sender, EventArgs e){
             AdvancedSettings.Hide();
             AdvancedSettings.Enabled = false;
         }
