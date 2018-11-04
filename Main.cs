@@ -16,6 +16,7 @@ namespace ITCdata
         List<List<double>> heat = new List<List<double>>();
         List<double> remainingSubstrate = new List<double>();
         List<Experiment> experimentList = new List<Experiment>();
+        List<Transform> transformList = new List<Transform>();
 
         private double heat_STDEV;
         private double signalNoise;
@@ -68,6 +69,8 @@ namespace ITCdata
             transformResults.Columns.Add("Remaining substrate", -2, HorizontalAlignment.Left);
             transformResults.Columns.Add("Heat rate", -2, HorizontalAlignment.Left);
 
+            transformTitlesList.Columns.Add("Filename", -2, HorizontalAlignment.Left);
+            transformTitlesList.View = View.Details;
             results.KeyDown += results_KeyDown;
             transformResults.KeyDown += results_KeyDown;
             textBox1.Validating += TextValidating;
@@ -77,6 +80,7 @@ namespace ITCdata
             refValueBox.Validating += TextValidating;
             peakDelay = 40;
             results.MouseClick += SelectItems;
+            transformTitlesList.MouseClick += SelectItems;
 
             //Nupud
             MinimizeButton.MouseClick += MinimizeButton_Click;
@@ -131,7 +135,6 @@ namespace ITCdata
 
         private void TotalTransformation(string fileName, int fileNumber)
         {
-
             //flip, et saaks võrrelda vana ITC-ga
             for (int c = 0; c < heat[fileNumber].Count; c++)
             {
@@ -167,28 +170,21 @@ namespace ITCdata
             }
             //Kogu pindala - pindala antud ajahetkeni = järelejäänud substraat
 
-            for (int a = transformInitialDelay; a < heat[fileNumber].Count; a++)
-            {
+            for (int a = transformInitialDelay; a < heat[fileNumber].Count; a++){
                 double currentArea = 0;
-                for(int i = transformInitialDelay; i <= a; i++ )
-                    {
+                for(int i = transformInitialDelay; i <= a; i++ ){
                     currentArea += heat[fileNumber][i];
-                    }
-                remainingSubstrate.Add(totalArea - currentArea);
-                    ListViewItem remSub = new ListViewItem((totalArea - currentArea).ToString("0.00000"), 0);
-                    remSub.SubItems.Add(heat[fileNumber][a].ToString("0.0000"));
-                    transformResults.Items.Add(remSub);
-            }
-            Series series1 = new Series { Name = titles[fileNumber], ChartType = SeriesChartType.Line, BorderWidth = 2 };
-            transformationGraph.ChartAreas[0].AxisX.Minimum = 0;
-            transformationGraph.ChartAreas[0].AxisY.Minimum = 0;
-
-                for (int b = indexOfMax - transformInitialDelay; b < remainingSubstrate.Count; b++)
-                {
-                    series1.Points.AddXY(remainingSubstrate[b], heat[fileNumber][b + transformInitialDelay]);
                 }
-            transformationGraph.Series.Add(series1);
-            remainingSubstrate.Clear();
+                remainingSubstrate.Add(totalArea - currentArea);               
+            }
+
+            Transform transform = new Transform(titles[fileNumber],indexOfMax, transformInitialDelay, remainingSubstrate, heat[fileNumber]);
+            transformList.Add(transform);
+                ListViewItem title = new ListViewItem(titles[fileNumber]);
+                transformTitlesList.Items.Insert(0, title);
+                transformTitlesList.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                DrawTransformPlot(fileNumber);
+                remainingSubstrate.Clear();
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -196,7 +192,6 @@ namespace ITCdata
                 exceptionThrown = true;
                 return;
             }
-
         }
         
         private void LinearRegression(string fileName, int fileNumber)
@@ -351,6 +346,7 @@ namespace ITCdata
                 MessageBox.Show(errorMsg);
             }
         }
+        //Check textbox input
         public bool ValidNumber(object sender, string number, out string errorMsg)
         {
             TextBox tb = (TextBox)sender;
@@ -400,6 +396,7 @@ namespace ITCdata
             
 
         }
+        //Ctrl + C listener - copy to clipboard
         private void results_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Control && e.KeyCode == Keys.C)
@@ -408,6 +405,7 @@ namespace ITCdata
             }
 
         }
+        //Copy to clipboard
         private void CopyToClipBoard()
         {
             if (mode == 0)
@@ -472,15 +470,55 @@ namespace ITCdata
                 //Ignob errorit, lubab sama nimega tulemusi panna graafikule, tulevikus lisada ID lõppu nimele
             }
         }//DrawActivityPlot
+        //Show transform data and chart from list
+        private void DrawTransformPlot(int ID)
+        {
+            transformationGraph.Series.Clear();
+            transformResults.Items.Clear();
+            //transformationGraph.ChartAreas[0].AxisY.Maximum = 0;
+            //transformationGraph.ChartAreas[0].AxisX.Maximum = 0;
+            //Data to listview
+            Console.WriteLine("DRAWING: " + ID);
+                for (int a = transformList[ID].iniDelay; a < transformList[ID].heatRate.Count; a++)
+                {
+                    ListViewItem remSub = new ListViewItem(transformList[ID].subRemaining[a - transformInitialDelay].ToString("0.00000"), 0);
+                    remSub.SubItems.Add(transformList[ID].heatRate[a].ToString("0.0000"));
+                    transformResults.Items.Add(remSub);
+                }
+            //Draw graph
+            Series series1 = new Series { Name = transformList[ID].title, ChartType = SeriesChartType.Point, MarkerSize = 2 };
+            //transformationGraph.ChartAreas[0].AxisX.Minimum = 0;
+            //transformationGraph.ChartAreas[0].AxisY.Minimum = 0;
+            for (int b = transformList[ID].indexMax - transformList[ID].iniDelay; b < transformList[ID].subRemaining.Count; b++)
+            {
+                series1.Points.AddXY(transformList[ID].subRemaining[b], transformList[ID].heatRate[b + transformList[ID].iniDelay]);
+            }
+            transformationGraph.Series.Add(series1);
+
+        }//DrawTransformPlot
 
         private void SelectItems(object sender, EventArgs e) {
-            resultsGraph.Series.Clear();
-            resultsGraph.ChartAreas[0].AxisY.Maximum = 0;
-            int ID;
-            foreach (ListViewItem item in results.SelectedItems)
-            { 
-                ID = experimentList.Count - item.Index - 1;
-                DrawActivityPlot(ID);
+            if (mode == 0)
+            {
+                resultsGraph.Series.Clear();
+                resultsGraph.ChartAreas[0].AxisY.Maximum = 0;
+                int ID;
+                foreach (ListViewItem item in results.SelectedItems)
+                {
+                    ID = experimentList.Count - item.Index - 1;
+                    DrawActivityPlot(ID);
+                }
+            }
+            else if (mode == 1)
+            {
+                int ID;
+                if (transformTitlesList.SelectedItems.Count > 0)
+                {
+                    var item = transformTitlesList.SelectedItems[0];
+                    ID = transformList.Count - item.Index - 1;
+                    DrawTransformPlot(ID);
+                }
+
             }
         }//SelectItems
 
@@ -545,7 +583,6 @@ namespace ITCdata
                                 if (heatv != 0)
                                 {
                                     heat[b].Add(heatv);
-                                    //Console.WriteLine("HEAT[" + b + "]: " + heatv);
                                 }
                                 b++;
                             }
@@ -605,7 +642,7 @@ namespace ITCdata
             }
             return "WARNING: S/N ratio is low: " + signalNoise.ToString("0.0");
         }
-
+        //Clear data
         private void resetButton_Click(object sender, EventArgs e)
         {
             switch (mode) {
@@ -619,7 +656,7 @@ namespace ITCdata
                     break;
             }
         }
-
+        //Header menu controls
         private void ToggleMenu()
         {
             switch (mode)
@@ -655,7 +692,7 @@ namespace ITCdata
                     transformationMenu.Enabled = true;
                     break;
             }
-        }//ToggleMenu
+        }
 
         private void transformationButton_Click_1(object sender, EventArgs e)
         {
