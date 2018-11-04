@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ITCdata.exe" size="2300384">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ITCdata.exe" size="2319328">
       <assemblyIdentity name="ITCdata" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>CM2CVYQRBU9OCsPrGsA9cB16k6Zbsqxewl2UjDLrxsg=</dsig:DigestValue>
+        <dsig:DigestValue>a+NCBfDcr0ACSSDd/K7Db88Ii+fuMBBJbMG7w2qD9eg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

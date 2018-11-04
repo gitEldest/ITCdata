@@ -9,7 +9,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace ITCdata
 {
-    public partial class Form1 : Form
+    public partial class Main : Form
     {
         List<string> sFileNames = new List<string>();
         List<string> titles = new List<string>();
@@ -33,6 +33,8 @@ namespace ITCdata
         private int signalNoiseTolerance;
         private int mode;
         private int transformInitialDelay;
+        private bool exceptionThrown;
+
         
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
@@ -41,7 +43,7 @@ namespace ITCdata
         [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
         public static extern bool ReleaseCapture();
 
-        public Form1()
+        public Main()
         {
             InitializeComponent();
 
@@ -62,7 +64,10 @@ namespace ITCdata
             results.Columns.Add("R-squared", -2, HorizontalAlignment.Left);
             results.Columns.Add("Experiment", -2, HorizontalAlignment.Left);
             results.Columns.Add("Comments", -2, HorizontalAlignment.Left);
-            
+
+            transformResults.Columns.Add("Remaining substrate", -2, HorizontalAlignment.Left);
+            transformResults.Columns.Add("Heat rate", -2, HorizontalAlignment.Left);
+
             results.KeyDown += results_KeyDown;
             transformResults.KeyDown += results_KeyDown;
             textBox1.Validating += TextValidating;
@@ -135,12 +140,13 @@ namespace ITCdata
 
             //baseline
             double baseline = 0;
-            for (int a = 0; a < transformInitialDelay; a++)
+            try
             {
-                baseline += heat[fileNumber][a];
-            }
-            baseline = baseline / transformInitialDelay;
-
+                for (int a = 0; a < transformInitialDelay; a++)
+                {
+                    baseline += heat[fileNumber][a];
+                }
+                baseline = baseline / transformInitialDelay;
             //baseline maha lahutada + total area + leiab max heatrate
             totalArea = 0;
             double maxValue = 0;
@@ -160,6 +166,7 @@ namespace ITCdata
                 }
             }
             //Kogu pindala - pindala antud ajahetkeni = järelejäänud substraat
+
             for (int a = transformInitialDelay; a < heat[fileNumber].Count; a++)
             {
                 double currentArea = 0;
@@ -168,8 +175,6 @@ namespace ITCdata
                     currentArea += heat[fileNumber][i];
                     }
                 remainingSubstrate.Add(totalArea - currentArea);
-                    transformResults.Columns.Add("Remaining substrate", -2, HorizontalAlignment.Left);
-                    transformResults.Columns.Add("Heat rate", -2, HorizontalAlignment.Left);
                     ListViewItem remSub = new ListViewItem((totalArea - currentArea).ToString("0.00000"), 0);
                     remSub.SubItems.Add(heat[fileNumber][a].ToString("0.0000"));
                     transformResults.Items.Add(remSub);
@@ -178,12 +183,20 @@ namespace ITCdata
             transformationGraph.ChartAreas[0].AxisX.Minimum = 0;
             transformationGraph.ChartAreas[0].AxisY.Minimum = 0;
 
-            for (int b = indexOfMax- transformInitialDelay; b < remainingSubstrate.Count; b++)
-            {
-                series1.Points.AddXY(remainingSubstrate[b],heat[fileNumber][b+ transformInitialDelay]);
-            }
+                for (int b = indexOfMax - transformInitialDelay; b < remainingSubstrate.Count; b++)
+                {
+                    series1.Points.AddXY(remainingSubstrate[b], heat[fileNumber][b + transformInitialDelay]);
+                }
             transformationGraph.Series.Add(series1);
             remainingSubstrate.Clear();
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                MessageBox.Show("Enter a correct value for initial delay");
+                exceptionThrown = true;
+                return;
+            }
+
         }
         
         private void LinearRegression(string fileName, int fileNumber)
@@ -201,10 +214,20 @@ namespace ITCdata
             }
             //baseline
             double baseline = 0;
-            for (int a = initialDelay + peakDelay;a <= initialDelay + injLength; a++)
+            try
             {
-                baseline += heat[fileNumber][a];
+                for (int a = initialDelay + peakDelay; a <= initialDelay + injLength; a++)
+                {
+                    baseline += heat[fileNumber][a];
+                }
             }
+            catch (System.ArgumentOutOfRangeException)
+            {
+                MessageBox.Show("Slope can't be calculated, check experiment parameters");
+                exceptionThrown = true;
+                return;
+            }
+
             baseline = baseline / (injLength - peakDelay + 1);
             //Lisan 0 konts. ja 0 heat tabelisse
             conc.Add(0);
@@ -214,16 +237,25 @@ namespace ITCdata
                 conc.Add(injConc * (a + 1));
             }
             //SÜstide keskmine heatrate
-            for (int k = 0; k < injAmount; k++)
+            try
             {
-                injNumber = k + 1;
-                averageHeat.Add(0);
-                injStartValue.Add(heat[fileNumber][initialDelay + peakDelay + injLength * injNumber]);
-                injEndValue.Add(heat[fileNumber][initialDelay + injLength * (injNumber + 1)]);
-                for (int a = initialDelay + peakDelay + injLength * injNumber; a <= initialDelay + injLength * (injNumber + 1); a++)
+                for (int k = 0; k < injAmount; k++)
                 {
-                    averageHeat[injNumber] += heat[fileNumber][a];
+                    injNumber = k + 1;
+                    averageHeat.Add(0);
+                    injStartValue.Add(heat[fileNumber][initialDelay + peakDelay + injLength * injNumber]);
+                    injEndValue.Add(heat[fileNumber][initialDelay + injLength * (injNumber + 1)]);
+                    for (int a = initialDelay + peakDelay + injLength * injNumber; a <= initialDelay + injLength * (injNumber + 1); a++)
+                    {
+                        averageHeat[injNumber] += heat[fileNumber][a];
+                    }
                 }
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                MessageBox.Show("Slope can't be calculated, check experiment parameters");
+                exceptionThrown = true;
+                return;
             }
             //baseline maha lahutada
             for (int b = 1; b < averageHeat.Count; b++)
@@ -235,7 +267,6 @@ namespace ITCdata
             for (int a = initialDelay + peakDelay+ injLength; a <= initialDelay + injLength*2; a++)
             {
                 averageHeatDeviation.Add(Math.Pow(heat[fileNumber][a] - baseline - averageHeat[1], 2));      
-               
             }
             
             for (int a = 0; a < averageHeatDeviation.Count; a++)
@@ -323,16 +354,6 @@ namespace ITCdata
         public bool ValidNumber(object sender, string number, out string errorMsg)
         {
             TextBox tb = (TextBox)sender;
-            if (number.Length == 0 && tb != textBox1)
-            {
-                errorMsg = "All fields must be filled";
-                return false;
-            }
-            if(tb == textBox1 && number.Length == 0)
-            {
-                errorMsg = "";
-                return true;
-            }
             if (tb == textBox3)
             {
                 if (double.TryParse(tb.Text, out double dvalue))
@@ -351,13 +372,33 @@ namespace ITCdata
                     return true;
                 }
             }
+            if (tb == textBox4 ) {
+                int.TryParse(tb.Text, out int value);
+                    if (value < 2)
+                {
+                    errorMsg = "Must have at least 2 injections";
+                    return false;
+                }
+                    else
+                {
+                    errorMsg = "";
+                    return true;
+                }
+            }
             else if (int.TryParse(tb.Text, out int value))
             {
                 errorMsg = "";
                 return true;
             }
-            errorMsg = "Insert a valid number";
-            return false;
+            if (tb.Text != "")
+            {
+                errorMsg = "Insert a valid number";
+                return false;
+            }
+            errorMsg = "";
+            return true;
+            
+
         }
         private void results_KeyDown(object sender, KeyEventArgs e)
         {
@@ -374,7 +415,7 @@ namespace ITCdata
                 var builder = new StringBuilder();
                 foreach (ListViewItem item in results.SelectedItems)
                 {
-                    builder.AppendLine(item.Text);
+                    builder.AppendLine(item.Text + "\t" + item.SubItems[1].Text);
                 }
                 //Kontrollib, et valik poleks tühi
                 if (string.IsNullOrEmpty(builder.ToString())) { }
@@ -523,10 +564,12 @@ namespace ITCdata
                 for (int d = 0; d < titles.Count; d++)
                 {
                     LinearRegression(titles[d], d);
-                        ListViewItem item = new ListViewItem(experimentList[experimentList.Count - 1].slope.ToString("0.000"), 0);
+                        if (exceptionThrown != true)
+                        {
+                            ListViewItem item = new ListViewItem(experimentList[experimentList.Count - 1].slope.ToString("0.000"), 0);
                             if (refValue == 0)
                             {
-                                item.SubItems.Add("No reference");
+                                item.SubItems.Add("");
                             }
                             else if (refValue > 0)
                             {
@@ -538,7 +581,8 @@ namespace ITCdata
                             item.SubItems.Add(CheckSignal() + " " + baselineMessage);
                             results.Items.Insert(0, item);
                             results.Columns[3].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                            results.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);   
+                            results.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                        }
             }
                     break;
                 //Total hydrolysis transformation
@@ -551,6 +595,7 @@ namespace ITCdata
         }
                     heat.Clear();
                     titles.Clear();
+            exceptionThrown = false;
                 }//CalculateButton
 
         private string CheckSignal() {
@@ -572,7 +617,7 @@ namespace ITCdata
             transformResults.Items.Clear();
             transformationGraph.Series.Clear();
                     break;
-        }
+            }
         }
 
         private void ToggleMenu()
@@ -611,17 +656,6 @@ namespace ITCdata
                     break;
             }
         }//ToggleMenu
-        private void AdvancedSettings_Click(object sender, EventArgs e)
-        {
-            AdvancedSettings.Show();
-            AdvancedSettings.Enabled = true;
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            AdvancedSettings.Hide();
-            AdvancedSettings.Enabled = false;
-        }
 
         private void transformationButton_Click_1(object sender, EventArgs e)
         {
@@ -633,6 +667,18 @@ namespace ITCdata
         {
             mode = 0;
             ToggleMenu();
+        }
+
+        private void advancedSettingsButton_Click(object sender, EventArgs e)
+        {
+            AdvancedSettings.Show();
+            AdvancedSettings.Enabled = true;
+        }
+
+        private void closeSettingsButton_Click(object sender, EventArgs e)
+        {
+            AdvancedSettings.Hide();
+            AdvancedSettings.Enabled = false;
         }
     }//end class Form1
     

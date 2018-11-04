@@ -33,7 +33,6 @@ C:\Users\Robert\Source\Repos\ITCdata\bin\Debug\ITCdata.application
 C:\Users\Robert\Source\Repos\ITCdata\bin\Debug\ITCdata.exe
 C:\Users\Robert\Source\Repos\ITCdata\bin\Debug\ITCdata.pdb
 C:\Users\Robert\Source\Repos\ITCdata\obj\Debug\ITCdata.csprojAssemblyReference.cache
-C:\Users\Robert\Source\Repos\ITCdata\obj\Debug\ITCdata.Form1.resources
 C:\Users\Robert\Source\Repos\ITCdata\obj\Debug\ITCdata.Properties.Resources.resources
 C:\Users\Robert\Source\Repos\ITCdata\obj\Debug\ITCdata.csproj.GenerateResource.cache
 C:\Users\Robert\Source\Repos\ITCdata\obj\Debug\ITCdata.csproj.CoreCompileInputs.cache
@@ -55,3 +54,4 @@ C:\Users\robik\Source\Repos\ITCdata\obj\Debug\ITCdata.exe.manifest
 C:\Users\robik\Source\Repos\ITCdata\obj\Debug\ITCdata.application
 C:\Users\robik\Source\Repos\ITCdata\obj\Debug\ITCdata.exe
 C:\Users\robik\Source\Repos\ITCdata\obj\Debug\ITCdata.pdb
+C:\Users\Robert\Source\Repos\ITCdata\obj\Debug\ITCdata.Main.resources
