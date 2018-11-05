@@ -30,10 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.label8 = new System.Windows.Forms.Label();
             this.SelectList = new System.Windows.Forms.ImageList(this.components);
@@ -112,9 +112,9 @@
             this.label8.Location = new System.Drawing.Point(1033, 690);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(118, 21);
+            this.label8.Size = new System.Drawing.Size(117, 21);
             this.label8.TabIndex = 5;
-            this.label8.Text = "v0.2 (2018) Robert Risti";
+            this.label8.Text = "v1.0 (2018) Robert Risti";
             // 
             // SelectList
             // 
@@ -145,10 +145,10 @@
             // 
             // resultsGraph
             // 
-            chartArea1.Name = "ChartArea1";
-            this.resultsGraph.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.resultsGraph.Legends.Add(legend1);
+            chartArea3.Name = "ChartArea1";
+            this.resultsGraph.ChartAreas.Add(chartArea3);
+            legend3.Name = "Legend1";
+            this.resultsGraph.Legends.Add(legend3);
             this.resultsGraph.Location = new System.Drawing.Point(242, 484);
             this.resultsGraph.Name = "resultsGraph";
             this.resultsGraph.Size = new System.Drawing.Size(706, 235);
@@ -157,10 +157,10 @@
             // 
             // transformationGraph
             // 
-            chartArea2.Name = "ChartArea1";
-            this.transformationGraph.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.transformationGraph.Legends.Add(legend2);
+            chartArea4.Name = "ChartArea1";
+            this.transformationGraph.ChartAreas.Add(chartArea4);
+            legend4.Name = "Legend1";
+            this.transformationGraph.Legends.Add(legend4);
             this.transformationGraph.Location = new System.Drawing.Point(242, 484);
             this.transformationGraph.Name = "transformationGraph";
             this.transformationGraph.Size = new System.Drawing.Size(706, 235);
@@ -263,6 +263,7 @@
             this.resetButton.Name = "resetButton";
             this.resetButton.Size = new System.Drawing.Size(46, 25);
             this.resetButton.TabIndex = 17;
+            this.resetButton.TabStop = false;
             this.resetButton.Text = "Reset";
             this.resetButton.UseVisualStyleBackColor = true;
             this.resetButton.Click += new System.EventHandler(this.resetButton_Click);
@@ -323,6 +324,7 @@
             this.baselineBox.Name = "baselineBox";
             this.baselineBox.Size = new System.Drawing.Size(43, 27);
             this.baselineBox.TabIndex = 3;
+            this.baselineBox.TabStop = false;
             this.baselineBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // pictureBox8
@@ -353,6 +355,7 @@
             this.signalBox.Name = "signalBox";
             this.signalBox.Size = new System.Drawing.Size(43, 27);
             this.signalBox.TabIndex = 4;
+            this.signalBox.TabStop = false;
             this.signalBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // peakBox
@@ -363,6 +366,7 @@
             this.peakBox.Name = "peakBox";
             this.peakBox.Size = new System.Drawing.Size(43, 27);
             this.peakBox.TabIndex = 5;
+            this.peakBox.TabStop = false;
             this.peakBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // closeSettingsButton

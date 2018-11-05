@@ -589,7 +589,7 @@ namespace ITCdata
             if(sFileNames.Count == 0){
                 MessageBox.Show("Please select file(s)");
             }
-            if (sFileNames.Count != 0){
+           else{
                 ParseData();
                 switch (mode){
                     //Enzyme activity
@@ -624,7 +624,6 @@ namespace ITCdata
                 heat.Clear();
                 titles.Clear();
                 exceptionThrown = false;
-                sFileNames.Clear();
             }
                 }//CalculateButton
 
@@ -651,6 +650,7 @@ namespace ITCdata
         //Header menu controls
         private void ToggleMenu()
         {
+            sFileNames.Clear();
             switch (mode)
             {
                 case 0:
