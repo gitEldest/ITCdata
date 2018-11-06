@@ -133,20 +133,15 @@ namespace ITCdata
             Close();
         }
 
-        private void TotalTransformation(string fileName, int fileNumber)
-        {
+        private void TotalTransformation(string fileName, int fileNumber){
             //flip, et saaks võrrelda vana ITC-ga
-            for (int c = 0; c < heat[fileNumber].Count; c++)
-            {
+            for (int c = 0; c < heat[fileNumber].Count; c++){
                 heat[fileNumber][c] = heat[fileNumber][c] * -1;
             }
-
             //baseline
             double baseline = 0;
-            try
-            {
-                for (int a = 0; a < transformInitialDelay; a++)
-                {
+            try{
+                for (int a = 0; a < transformInitialDelay; a++){
                     baseline += heat[fileNumber][a];
                 }
                 baseline = baseline / transformInitialDelay;
@@ -154,22 +149,18 @@ namespace ITCdata
             totalArea = 0;
             double maxValue = 0;
             int indexOfMax = 0;
-            for (int a = transformInitialDelay; a < heat[fileNumber].Count; a++)
-            {
+            for (int a = transformInitialDelay; a < heat[fileNumber].Count; a++){
                 heat[fileNumber][a] -= baseline;
                 //jätta välja negatiivsed väärtused
-                if (heat[fileNumber][a] > 0)
-                {
+                if (heat[fileNumber][a] > 0){
                     totalArea += heat[fileNumber][a];
                 }
-                if(heat[fileNumber][a] > maxValue)
-                {
+                if(heat[fileNumber][a] > maxValue){
                     maxValue = heat[fileNumber][a];
                     indexOfMax = a;
                 }
             }
             //Kogu pindala - pindala antud ajahetkeni = järelejäänud substraat
-
             for (int a = transformInitialDelay; a < heat[fileNumber].Count; a++){
                 double currentArea = 0;
                 for(int i = transformInitialDelay; i <= a; i++ ){
@@ -177,7 +168,6 @@ namespace ITCdata
                 }
                 remainingSubstrate.Add(totalArea - currentArea);               
             }
-
             Transform transform = new Transform(titles[fileNumber],indexOfMax, transformInitialDelay, remainingSubstrate, heat[fileNumber]);
             transformList.Add(transform);
                 ListViewItem title = new ListViewItem(titles[fileNumber]);
@@ -186,8 +176,7 @@ namespace ITCdata
                 DrawTransformPlot(fileNumber);
                 remainingSubstrate.Clear();
             }
-            catch (ArgumentOutOfRangeException)
-            {
+            catch (ArgumentOutOfRangeException){
                 MessageBox.Show("Enter a correct value for initial delay");
                 exceptionThrown = true;
                 return;
@@ -466,14 +455,10 @@ namespace ITCdata
             }
         }//DrawActivityPlot
         //Show transform data and chart from list
-        private void DrawTransformPlot(int ID)
-        {
+        private void DrawTransformPlot(int ID){
             transformationGraph.Series.Clear();
             transformResults.Items.Clear();
-            //transformationGraph.ChartAreas[0].AxisY.Maximum = 0;
-            //transformationGraph.ChartAreas[0].AxisX.Maximum = 0;
             //Data to listview
-            Console.WriteLine("DRAWING: " + ID);
                 for (int a = transformList[ID].iniDelay; a < transformList[ID].heatRate.Count; a++)
                 {
                     ListViewItem remSub = new ListViewItem(transformList[ID].subRemaining[a - transformInitialDelay].ToString("0.00000"), 0);
@@ -490,28 +475,23 @@ namespace ITCdata
 
         }//DrawTransformPlot
 
-        private void SelectItems(object sender, EventArgs e) {
-            if (mode == 0)
-            {
+        private void SelectItems(object sender, EventArgs e){
+            if (mode == 0){
                 resultsGraph.Series.Clear();
                 resultsGraph.ChartAreas[0].AxisY.Maximum = 0;
                 int ID;
-                foreach (ListViewItem item in results.SelectedItems)
-                {
+                foreach (ListViewItem item in results.SelectedItems){
                     ID = experimentList.Count - item.Index - 1;
                     DrawActivityPlot(ID);
                 }
             }
-            else if (mode == 1)
-            {
+            else if (mode == 1){
                 int ID;
-                if (transformTitlesList.SelectedItems.Count > 0)
-                {
+                if (transformTitlesList.SelectedItems.Count > 0){
                     var item = transformTitlesList.SelectedItems[0];
                     ID = transformList.Count - item.Index - 1;
                     DrawTransformPlot(ID);
                 }
-
             }
         }//SelectItems
 
@@ -526,24 +506,30 @@ namespace ITCdata
             }
         }//OpenDialog
 
-        private void ParseData()
-        {
+        private void ParseData() {
             int lastPos = 0;
-            if (mode == 0)
+            try{
+                if (mode == 0)
+                {
+                    resultsGraph.Series.Clear();
+                    initialDelay = int.Parse(textBox1.Text) - 5;
+                    injLength = int.Parse(textBox2.Text);
+                    injAmount = int.Parse(textBox4.Text);
+                    peakDelay = int.Parse(peakBox.Text);
+                    baselineDriftTolerance = int.Parse(baselineBox.Text);
+                    signalNoiseTolerance = int.Parse(signalBox.Text);
+                }
+                if (mode == 1)
+                {
+                    transformationGraph.Series.Clear();
+                    transformInitialDelay = int.Parse(transformInitDelayBox.Text) - 5;
+                    peakDelay = int.Parse(peakBox.Text);
+                }
+            }
+            catch (System.FormatException)
             {
-                resultsGraph.Series.Clear();
-                initialDelay = int.Parse(textBox1.Text) - 5;
-                injLength = int.Parse(textBox2.Text);
-                injAmount = int.Parse(textBox4.Text);
-                peakDelay = int.Parse(peakBox.Text);
-                baselineDriftTolerance = int.Parse(baselineBox.Text);
-                signalNoiseTolerance = int.Parse(signalBox.Text);
-    }
-            if (mode == 1)
-            {
-                transformationGraph.Series.Clear();
-                transformInitialDelay = int.Parse(transformInitDelayBox.Text) - 5;
-                peakDelay = int.Parse(peakBox.Text);
+                MessageBox.Show("Please provide all necessary parameters");
+                return;
             }
             for (int i = 0; i < sFileNames.Count; i++)
             {
