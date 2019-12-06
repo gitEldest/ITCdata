@@ -30,10 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend8 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.label8 = new System.Windows.Forms.Label();
             this.SelectList = new System.Windows.Forms.ImageList(this.components);
@@ -79,10 +79,14 @@
             this.pictureBox6 = new System.Windows.Forms.PictureBox();
             this.transformInitDelayBox = new System.Windows.Forms.TextBox();
             this.transformationMenu = new System.Windows.Forms.Panel();
-            this.fileNameBox = new System.Windows.Forms.Label();
-            this.CopyFromPeakButton = new System.Windows.Forms.PictureBox();
             this.transInjBox = new System.Windows.Forms.TextBox();
             this.pictureBox10 = new System.Windows.Forms.PictureBox();
+            this.fileNameBox = new System.Windows.Forms.Label();
+            this.CopyFromPeakButton = new System.Windows.Forms.PictureBox();
+            this.pictureBox11 = new System.Windows.Forms.PictureBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.smallDelay = new System.Windows.Forms.TextBox();
+            this.smallVolumeBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.CalculateButton)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.resultsGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.transformationGraph)).BeginInit();
@@ -106,8 +110,9 @@
             this.activityMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
             this.transformationMenu.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.CopyFromPeakButton)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox10)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CopyFromPeakButton)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox11)).BeginInit();
             this.SuspendLayout();
             // 
             // label8
@@ -151,10 +156,10 @@
             // 
             // resultsGraph
             // 
-            chartArea7.Name = "ChartArea1";
-            this.resultsGraph.ChartAreas.Add(chartArea7);
-            legend7.Name = "Legend1";
-            this.resultsGraph.Legends.Add(legend7);
+            chartArea3.Name = "ChartArea1";
+            this.resultsGraph.ChartAreas.Add(chartArea3);
+            legend3.Name = "Legend1";
+            this.resultsGraph.Legends.Add(legend3);
             this.resultsGraph.Location = new System.Drawing.Point(242, 484);
             this.resultsGraph.Name = "resultsGraph";
             this.resultsGraph.Size = new System.Drawing.Size(706, 235);
@@ -163,10 +168,10 @@
             // 
             // transformationGraph
             // 
-            chartArea8.Name = "ChartArea1";
-            this.transformationGraph.ChartAreas.Add(chartArea8);
-            legend8.Name = "Legend1";
-            this.transformationGraph.Legends.Add(legend8);
+            chartArea4.Name = "ChartArea1";
+            this.transformationGraph.ChartAreas.Add(chartArea4);
+            legend4.Name = "Legend1";
+            this.transformationGraph.Legends.Add(legend4);
             this.transformationGraph.Location = new System.Drawing.Point(242, 484);
             this.transformationGraph.Name = "transformationGraph";
             this.transformationGraph.Size = new System.Drawing.Size(706, 235);
@@ -378,7 +383,7 @@
             // closeSettingsButton
             // 
             this.closeSettingsButton.Image = ((System.Drawing.Image)(resources.GetObject("closeSettingsButton.Image")));
-            this.closeSettingsButton.Location = new System.Drawing.Point(136, 165);
+            this.closeSettingsButton.Location = new System.Drawing.Point(134, 229);
             this.closeSettingsButton.Name = "closeSettingsButton";
             this.closeSettingsButton.Size = new System.Drawing.Size(60, 30);
             this.closeSettingsButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -388,6 +393,10 @@
             // 
             // AdvancedSettings
             // 
+            this.AdvancedSettings.Controls.Add(this.smallVolumeBox);
+            this.AdvancedSettings.Controls.Add(this.smallDelay);
+            this.AdvancedSettings.Controls.Add(this.label4);
+            this.AdvancedSettings.Controls.Add(this.pictureBox11);
             this.AdvancedSettings.Controls.Add(this.closeSettingsButton);
             this.AdvancedSettings.Controls.Add(this.peakBox);
             this.AdvancedSettings.Controls.Add(this.signalBox);
@@ -401,7 +410,7 @@
             this.AdvancedSettings.Font = new System.Drawing.Font("Palanquin Light", 10F);
             this.AdvancedSettings.Location = new System.Drawing.Point(1069, 55);
             this.AdvancedSettings.Name = "AdvancedSettings";
-            this.AdvancedSettings.Size = new System.Drawing.Size(200, 201);
+            this.AdvancedSettings.Size = new System.Drawing.Size(200, 265);
             this.AdvancedSettings.TabIndex = 20;
             this.AdvancedSettings.TabStop = false;
             this.AdvancedSettings.Text = "Advanced settings";
@@ -588,27 +597,6 @@
             this.transformationMenu.Size = new System.Drawing.Size(197, 418);
             this.transformationMenu.TabIndex = 30;
             // 
-            // fileNameBox
-            // 
-            this.fileNameBox.AutoSize = true;
-            this.fileNameBox.BackColor = System.Drawing.Color.Transparent;
-            this.fileNameBox.Font = new System.Drawing.Font("Palanquin Light", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(186)));
-            this.fileNameBox.Location = new System.Drawing.Point(6, 52);
-            this.fileNameBox.Name = "fileNameBox";
-            this.fileNameBox.Size = new System.Drawing.Size(0, 28);
-            this.fileNameBox.TabIndex = 33;
-            // 
-            // CopyFromPeakButton
-            // 
-            this.CopyFromPeakButton.Image = ((System.Drawing.Image)(resources.GetObject("CopyFromPeakButton.Image")));
-            this.CopyFromPeakButton.Location = new System.Drawing.Point(32, 586);
-            this.CopyFromPeakButton.Name = "CopyFromPeakButton";
-            this.CopyFromPeakButton.Size = new System.Drawing.Size(180, 41);
-            this.CopyFromPeakButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.CopyFromPeakButton.TabIndex = 30;
-            this.CopyFromPeakButton.TabStop = false;
-            this.CopyFromPeakButton.Click += new System.EventHandler(this.CopyFromPeakButton_Click);
-            // 
             // transInjBox
             // 
             this.transInjBox.BackColor = System.Drawing.Color.White;
@@ -630,6 +618,66 @@
             this.pictureBox10.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pictureBox10.TabIndex = 31;
             this.pictureBox10.TabStop = false;
+            // 
+            // fileNameBox
+            // 
+            this.fileNameBox.AutoSize = true;
+            this.fileNameBox.BackColor = System.Drawing.Color.Transparent;
+            this.fileNameBox.Font = new System.Drawing.Font("Palanquin Light", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(186)));
+            this.fileNameBox.Location = new System.Drawing.Point(6, 52);
+            this.fileNameBox.Name = "fileNameBox";
+            this.fileNameBox.Size = new System.Drawing.Size(0, 28);
+            this.fileNameBox.TabIndex = 33;
+            // 
+            // CopyFromPeakButton
+            // 
+            this.CopyFromPeakButton.Image = ((System.Drawing.Image)(resources.GetObject("CopyFromPeakButton.Image")));
+            this.CopyFromPeakButton.Location = new System.Drawing.Point(32, 586);
+            this.CopyFromPeakButton.Name = "CopyFromPeakButton";
+            this.CopyFromPeakButton.Size = new System.Drawing.Size(180, 41);
+            this.CopyFromPeakButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.CopyFromPeakButton.TabIndex = 30;
+            this.CopyFromPeakButton.TabStop = false;
+            this.CopyFromPeakButton.Click += new System.EventHandler(this.CopyFromPeakButton_Click);
+            // 
+            // pictureBox11
+            // 
+            this.pictureBox11.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox11.Image")));
+            this.pictureBox11.Location = new System.Drawing.Point(8, 214);
+            this.pictureBox11.Name = "pictureBox11";
+            this.pictureBox11.Size = new System.Drawing.Size(74, 34);
+            this.pictureBox11.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox11.TabIndex = 36;
+            this.pictureBox11.TabStop = false;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 189);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(125, 25);
+            this.label4.TabIndex = 37;
+            this.label4.Text = "Small volume delay";
+            // 
+            // smallDelay
+            // 
+            this.smallDelay.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.smallDelay.Font = new System.Drawing.Font("Palanquin Light", 11F);
+            this.smallDelay.Location = new System.Drawing.Point(22, 218);
+            this.smallDelay.Name = "smallDelay";
+            this.smallDelay.Size = new System.Drawing.Size(43, 27);
+            this.smallDelay.TabIndex = 38;
+            this.smallDelay.TabStop = false;
+            this.smallDelay.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // smallVolumeBox
+            // 
+            this.smallVolumeBox.AutoSize = true;
+            this.smallVolumeBox.Location = new System.Drawing.Point(91, 223);
+            this.smallVolumeBox.Name = "smallVolumeBox";
+            this.smallVolumeBox.Size = new System.Drawing.Size(15, 14);
+            this.smallVolumeBox.TabIndex = 39;
+            this.smallVolumeBox.UseVisualStyleBackColor = true;
             // 
             // Main
             // 
@@ -686,8 +734,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
             this.transformationMenu.ResumeLayout(false);
             this.transformationMenu.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.CopyFromPeakButton)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox10)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CopyFromPeakButton)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox11)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -743,6 +792,10 @@
         private System.Windows.Forms.PictureBox CopyFromPeakButton;
         private System.Windows.Forms.TextBox transInjBox;
         private System.Windows.Forms.PictureBox pictureBox10;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.PictureBox pictureBox11;
+        private System.Windows.Forms.TextBox smallDelay;
+        private System.Windows.Forms.CheckBox smallVolumeBox;
     }
 }
 

@@ -27,6 +27,8 @@ namespace ITCdata
         private int initialDelay;
         private int injLength;
         private int peakDelay;
+        private int smallLength;
+        private int baselineDelay;
         private int injAmount;
         private int injNumber;
         private int ID;
@@ -203,21 +205,32 @@ namespace ITCdata
             }
             //baseline
             double baseline = 0;
+
             try
             {
-                for (int a = initialDelay + peakDelay; a <= initialDelay + injLength; a++)
+                //Kas esimene väike süst on teistest süstidest erineva pikkusega
+                switch (smallVolumeBox.Checked)
+                {
+                    case true:
+                        smallLength = baselineDelay;
+                        break;
+                    case false:
+                        smallLength = injLength;
+                        break;
+                }
+                for (int a = initialDelay + peakDelay; a <= initialDelay + smallLength; a++)
                 {
                     baseline += heat[fileNumber][a];
                 }
             }
             catch (System.ArgumentOutOfRangeException)
             {
-                MessageBox.Show("Slope can't be calculated, check experiment parameters");
-                exceptionThrown = true;
-                return;
+                    MessageBox.Show("Slope can't be calculated, check experiment parameters");
+                    exceptionThrown = true;
+                    return;
             }
+            baseline = baseline / (smallLength - peakDelay + 1);
 
-            baseline = baseline / (injLength - peakDelay + 1);
             //Lisan 0 konts. ja 0 heat tabelisse
             conc.Add(0);
             averageHeat.Add(0);
@@ -230,21 +243,21 @@ namespace ITCdata
             {
                 for (int k = 0; k < injAmount; k++)
                 {
-                    injNumber = k + 1;
+                    injNumber = k;
                     averageHeat.Add(0);
-                    injStartValue.Add(heat[fileNumber][initialDelay + peakDelay + injLength * injNumber]);
-                    injEndValue.Add(heat[fileNumber][initialDelay + injLength * (injNumber + 1)]);
-                    for (int a = initialDelay + peakDelay + injLength * injNumber; a <= initialDelay + injLength * (injNumber + 1); a++)
+                    injStartValue.Add(heat[fileNumber][initialDelay + peakDelay + smallLength + injLength * injNumber]);
+                    injEndValue.Add(heat[fileNumber][initialDelay + smallLength + injLength * (injNumber + 1)]);
+                    for (int a = initialDelay + peakDelay + smallLength + injLength * injNumber; a <= initialDelay + smallLength + injLength * (injNumber + 1); a++)
                     {
-                        averageHeat[injNumber] += heat[fileNumber][a];
+                        averageHeat[injNumber+1] += heat[fileNumber][a];
                     }
                 }
             }
             catch (ArgumentOutOfRangeException)
             {
-                MessageBox.Show("Slope can't be calculated, check experiment parameters");
-                exceptionThrown = true;
-                return;
+                    MessageBox.Show("Slope can't be calculated, check experiment parameters");
+                    exceptionThrown = true;
+                    return;
             }
             //baseline maha lahutada
             for (int b = 1; b < averageHeat.Count; b++)
@@ -252,80 +265,90 @@ namespace ITCdata
                 averageHeat[b] = averageHeat[b] / (injLength - peakDelay + 1);
                 averageHeat[b] -= baseline;
             }
-            //STDEV S/N jaoks
-            for (int a = initialDelay + peakDelay+ injLength; a <= initialDelay + injLength*2; a++)
-            {
-                averageHeatDeviation.Add(Math.Pow(heat[fileNumber][a] - baseline - averageHeat[1], 2));      
-            }
-            
-            for (int a = 0; a < averageHeatDeviation.Count; a++)
-            {
-                heat_STDEV += averageHeatDeviation[a];
-            }
-            heat_STDEV = heat_STDEV / averageHeatDeviation.Count();  
-            heat_STDEV = Math.Sqrt(heat_STDEV);
-            signalNoise = Math.Round(averageHeat[1] / heat_STDEV, 1, MidpointRounding.AwayFromZero);
-            //Regression
-            double sumOfX = 0;
-            double sumOfY = 0;
-            double sumOfXSq = 0;
-            double sumOfYSq = 0;
-            double sumCodeviates = 0;
-            if (conc.Count != averageHeat.Count)
-            {
-                throw new Exception("Input values should be with the same length.");
-            }
-            for (var i = 0; i < conc.Count; i++)
-            {
-                var x = conc[i];
-                var y = averageHeat[i];
-                sumCodeviates += x * y;
-                sumOfX += x;
-                sumOfY += y;
-                sumOfXSq += x * x;
-                sumOfYSq += y * y;
-            }
-            var ssX = sumOfXSq - ((sumOfX * sumOfX) / conc.Count);
-            var ssY = sumOfYSq - ((sumOfY * sumOfY) / conc.Count);
 
-            var rNumerator = (conc.Count * sumCodeviates) - (sumOfX * sumOfY);
-            var rDenom = (conc.Count * sumOfXSq - (sumOfX * sumOfX)) * (conc.Count * sumOfYSq - (sumOfY * sumOfY));
-            var sCo = sumCodeviates - ((sumOfX * sumOfY) / conc.Count);
-
-            var meanX = sumOfX / conc.Count;
-            var meanY = sumOfY / conc.Count;
-            var dblR = rNumerator / Math.Sqrt(rDenom);
-
-            double rS = dblR * dblR;
-            double intercept = meanY - ((sCo / ssX) * meanX);
-            double slope = sCo / ssX;
-            if (refValue > 0) {
-                percentValue = (slope / refValue) * 100;
-            }
-            //Baseline drift evaluation
-            //Hetkel jagab läbi ainult ühe STDEV väärtusega, mis on leitud esimese süsti põhjal
-            int baseInj = 0;
-            for (int i = 0; i < injAmount; i++)
+            double rS = 0;
+            double intercept = 0;
+            double slope = 0;
+            if (injNumber > 1)
             {
-                if (Math.Abs(injEndValue[i] - injStartValue[i]) / heat_STDEV > baselineDriftTolerance && baseInj == 0)
+                //STDEV S/N jaoks
+                for (int a = initialDelay + peakDelay + injLength; a <= initialDelay + injLength * 2; a++)
                 {
-                    baselineMessage = "WARNING: Possible baseline drift for injection(s) nr: " + (i + 1).ToString();
-                    baseInj++;
+                    averageHeatDeviation.Add(Math.Pow(heat[fileNumber][a] - baseline - averageHeat[1], 2));
                 }
-                else if (Math.Abs(injEndValue[i] - injStartValue[i]) / heat_STDEV > baselineDriftTolerance && baseInj > 0)
+
+                for (int a = 0; a < averageHeatDeviation.Count; a++)
                 {
-                    baselineMessage = baselineMessage + "," + (i + 1).ToString();
+                    heat_STDEV += averageHeatDeviation[a];
                 }
+                heat_STDEV = heat_STDEV / averageHeatDeviation.Count();
+                heat_STDEV = Math.Sqrt(heat_STDEV);
+                signalNoise = Math.Round(averageHeat[1] / heat_STDEV, 1, MidpointRounding.AwayFromZero);
+                //Regression
+                double sumOfX = 0;
+                double sumOfY = 0;
+                double sumOfXSq = 0;
+                double sumOfYSq = 0;
+                double sumCodeviates = 0;
+                if (conc.Count != averageHeat.Count)
+                {
+                    throw new Exception("Input values should be with the same length.");
+                }
+                for (var i = 0; i < conc.Count; i++)
+                {
+                    var x = conc[i];
+                    var y = averageHeat[i];
+                    sumCodeviates += x * y;
+                    sumOfX += x;
+                    sumOfY += y;
+                    sumOfXSq += x * x;
+                    sumOfYSq += y * y;
+                }
+                var ssX = sumOfXSq - ((sumOfX * sumOfX) / conc.Count);
+                var ssY = sumOfYSq - ((sumOfY * sumOfY) / conc.Count);
+
+                var rNumerator = (conc.Count * sumCodeviates) - (sumOfX * sumOfY);
+                var rDenom = (conc.Count * sumOfXSq - (sumOfX * sumOfX)) * (conc.Count * sumOfYSq - (sumOfY * sumOfY));
+                var sCo = sumCodeviates - ((sumOfX * sumOfY) / conc.Count);
+
+                var meanX = sumOfX / conc.Count;
+                var meanY = sumOfY / conc.Count;
+                var dblR = rNumerator / Math.Sqrt(rDenom);
+
+                rS = dblR * dblR;
+                intercept = meanY - ((sCo / ssX) * meanX);
+                slope = sCo / ssX;
+                if (refValue > 0)
+                {
+                    percentValue = (slope / refValue) * 100;
+                }
+                //Baseline drift evaluation
+                //Hetkel jagab läbi ainult ühe STDEV väärtusega, mis on leitud esimese süsti põhjal
+                int baseInj = 0;
+                for (int i = 0; i < injAmount; i++)
+                {
+                    if (Math.Abs(injEndValue[i] - injStartValue[i]) / heat_STDEV > baselineDriftTolerance && baseInj == 0)
+                    {
+                        baselineMessage = "WARNING: Possible baseline drift for injection(s) nr: " + (i + 1).ToString();
+                        baseInj++;
+                    }
+                    else if (Math.Abs(injEndValue[i] - injStartValue[i]) / heat_STDEV > baselineDriftTolerance && baseInj > 0)
+                    {
+                        baselineMessage = baselineMessage + "," + (i + 1).ToString();
+                    }
+                }
+                baseInj = 0;
+
             }
-            baseInj = 0;
             //Data salvestamine 
-            Experiment experiment = new Experiment(titles[fileNumber],slope, rS, intercept, injConc, averageHeat);
+            Experiment experiment = new Experiment(titles[fileNumber], slope, rS, intercept, injConc, averageHeat);
             experimentList.Add(experiment);
             //Temp listid tühjaks järgmiseks katseks
             averageHeat.Clear();
             averageHeatDeviation.Clear();
             conc.Clear();
             heat_STDEV = 0;
+            
 
         }//LinearRegression
 
@@ -357,8 +380,8 @@ namespace ITCdata
             }
             if (tb == textBox4 ) {
                 int.TryParse(tb.Text, out int value);
-                    if (value < 2){
-                    errorMsg = "Must have at least 2 injections";
+                    if (value < 1){
+                    errorMsg = "Must have at least 1 injection";
                     return false;
                 }
                     else{
@@ -446,6 +469,7 @@ namespace ITCdata
             catch (System.ArgumentException) {
                 //Ignob errorit, lubab sama nimega tulemusi panna graafikule, tulevikus lisada ID lõppu nimele
             }
+            resultsGraph.Series[1].IsValueShownAsLabel = true;
         }//DrawActivityPlot
         //Show transform data and chart from list
         private void DrawTransformPlot(int ID){
@@ -512,6 +536,10 @@ namespace ITCdata
                     injLength = int.Parse(textBox2.Text);
                     injAmount = int.Parse(textBox4.Text);
                     peakDelay = int.Parse(peakBox.Text);
+                    if (smallVolumeBox.Checked == true)
+                    {
+                        baselineDelay = int.Parse(smallDelay.Text);
+                    }
                     baselineDriftTolerance = int.Parse(baselineBox.Text);
                     signalNoiseTolerance = int.Parse(signalBox.Text);
                 }
